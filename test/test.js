@@ -1,9 +1,11 @@
-var assert = require("assert"); //this uses require.js to load modules
+var assert = require('assert'); 
+var parcheesi = require('./../parcheesi');
 
-describe('Parcheesi Game', function() {
-	describe('#startGame()', function() {
-		it('should be able to start a new game', function() {
-			assert.true(false);
+describe('Parcheesi', function() {
+	describe('Game definition', function() {
+		it('should have a board', function() {
+			var game = new parcheesi.ParcheesiGame();
+			assert.notEqual(game.spaces, undefined);
 		})
 	})
 })
