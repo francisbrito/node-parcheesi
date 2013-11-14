@@ -1,0 +1,10 @@
+{
+    "name": "node-parcheesi",
+    "description": "Parcheesi Game developed in NodeJS (just for fun)",
+    "dependencies": {
+        "mocha": "1.14"
+    },
+    "scripts": {
+        "preinstall": "node config_environment.js"
+    }
+}
