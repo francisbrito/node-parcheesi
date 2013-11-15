@@ -79,6 +79,10 @@ describe("Parcheesi Core", function () {
 
             assert.fail();
         });
+
+        it("Should be a circular array", function (done) {
+            assert.fail();
+        });
     });
 
     describe("Game play", function() {
