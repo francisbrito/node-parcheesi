@@ -1,10 +1,10 @@
 /*jslint browser: false, nomen: true, sloppy: true*/
-/*global require, describe, console*/
+/*global require, describe, it, console*/
 
 var assert = require('assert');
 var parcheesi = require('./../parcheesi');
 
-describe('Parcheesi', function () {
+describe('Parcheesi Core', function () {
     describe('Game definition', function () {
         it('should have a board', function () {
             var game = new parcheesi.ParcheesiGame();
@@ -18,11 +18,15 @@ describe('Parcheesi', function () {
             assert(game.players.length >= 2 && game.players.length <= 4, 'Number of players is incorrect');
         });
 
+        it('should not have more than 4 players', function(){
+            assert.throws(function() {var game = new parcheesi.ParcheesiGame(5)}, Error);
+        })
+
         it('should assign different colors to each player', function () {
             //TODO: Let's check if we can define this instantiation on a single method that runs before each test
             var game = new parcheesi.ParcheesiGame();
 
             assert(game.players[0].color !== game.players[1].color, 'Player colors cannot be the same');
         });
-    })
-})
+    });
+});
