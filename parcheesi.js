@@ -10,17 +10,23 @@ var Player = function (color) {
 };
 exports.Player = Player;
 
-exports.ParcheesiGame = function (numberOfPlayers) {
-	var i, colors = ['red', 'blue', 'yellow', 'green'],
+var ParcheesiGame = function (numberOfPlayers) {
+    var i, 
+        realNumberOfPlayers = numberOfPlayers || 2,
+        colors = ['red', 'blue', 'yellow', 'green'],
         game = {
             spaces: new Array(64),
             players: []
         };
     
-    for (i = 0; i < (numberOfPlayers || 2); i += 1) {
+    if (realNumberOfPlayers > 4){
+        throw new Error('Wrong number of players');
+    }
+
+    for (i = 0; i < (realNumberOfPlayers); i += 1) {
         game.players.push(new Player(colors[i]));
     }
 
 	return game;
 };
-
+exports.ParcheesiGame = ParcheesiGame;
