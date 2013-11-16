@@ -13,7 +13,7 @@ describe('Parcheesi Core', function () {
             assert.fail();
         });
         
-        it('can't occupy the same safe space as an oponent's Pawn', function(){
+        it("can't occupy the same safe space as an oponent's Pawn", function(){
             assert.fail();
         });
 
