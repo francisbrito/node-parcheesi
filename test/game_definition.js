@@ -28,7 +28,7 @@ describe("Parcheesi Core", function () {
 
         it("should have at least two players to play", function () {
             var game = new parcheesi.ParcheesiGame();
-            assert(game.players.length === 0);
+            game.players.length.should.be.equal(2);
         });
 
         it("should assign different colors to each player", function () {
@@ -68,8 +68,7 @@ describe("Parcheesi Core", function () {
                 var firstDiceRoll = game.throwDices()[0];
                 distributions[firstDiceRoll-1] += 1; 
             };
-            console.log('\n');
-            console.log('Distributions: ' + distributions);
+            console.log('\nDistributions: ' + distributions);
 
             //Calculate the median deviation of each observed roll aggregate:
             var deviations = [];
