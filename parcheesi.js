@@ -12,6 +12,25 @@ var Player = function (color) {
 };
 exports.Player = Player;
 
+var Space = function(createAsSafe){
+    'use strict';
+
+    // enforces new
+    if (!(this instanceof Space)) {
+        return new Space(createAsSafe);
+    }
+
+    var safeSpot = createAsSafe || false,
+        space    = {        
+            pawns  : [],
+            isSafe : function(){
+                return safeSpot;
+            }
+        };
+
+    return space;
+};
+
 var ParcheesiGame = function (numberOfPlayers) {
     'use strict';
 
@@ -28,12 +47,31 @@ var ParcheesiGame = function (numberOfPlayers) {
             // http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range
             return Math.floor(Math.random() * (max - min + 1) + min);
         },
+
+        generateSpaces = function(){
+            var i      = 0,
+                spaces = new Array(68);
+
+            for (i = spaces.length - 1; i >= 0; i--) {
+                var quarter_section = Math.floor(i/17);
+                var isSpecial = (i == quarter_section * 17 + 0) ||
+                                (i == quarter_section * 17 + 5) ||
+                                (i == quarter_section * 17 + 12);
+                spaces[i] = new Space(isSpecial);
+            };
+            return spaces;
+        },
         
         game = {
-            spaces: new Array(64),
+            spaces: generateSpaces(),
             players: [],
+            
             throwDices: function() {
                 return [randomize(1, 6), randomize(1, 6)];
+            },
+
+            drawBoard: function() {
+                console.log('someday a board will be drawn here');
             }
         };
     

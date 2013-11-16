@@ -6,11 +6,12 @@
 var assert = require("assert");
 var parcheesi = require("./../parcheesi");
 
-
 describe("Parcheesi Core", function () {
     describe("Board Definition", function () {
         it("should have 68 spaces on the general playfield", function () {
-            assert.fail();
+            var game = new parcheesi.ParcheesiGame();
+
+            game.spaces.should.have.lengthOf(68);
         });
 
         it("should have a starting point (home) for each player", function () {
@@ -31,18 +32,19 @@ describe("Parcheesi Core", function () {
         });
 
         it("should have safe places distribuited across the general playfield", function () {
-            var i, game = new parcheesi.ParcheesiGame();
+            var i, 
+                game = new parcheesi.ParcheesiGame();
+            
             for (i = 0; i < 4; i += 1) {
-                assert.game.spaces[i * 17 + 0].isSafe();
-                assert.game.spaces[i * 17 + 5].isSafe();
-                assert.game.spaces[i * 17 + 12].isSafe();
+                assert(game.spaces[i * 17 + 0].isSafe());
+                assert(game.spaces[i * 17 + 5].isSafe());
+                assert(game.spaces[i * 17 + 12].isSafe());
             }
+        });
 
+        it("Should be a circular array", function () {
             assert.fail();
         });
 
-        it("Should be a circular array", function (done) {
-            assert.fail();
-        });
     });
 });
