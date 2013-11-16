@@ -86,7 +86,7 @@ describe("Parcheesi Core", function () {
             console.log('Deviations: ' + deviations);
             console.log('Median Deviation: ' + medianDeviation.toFixed(2));
 
-            medianDeviation.should.be.within(0, 0.07);
+            medianDeviation.should.be.within(0, 0.1);
         });
     });
     
