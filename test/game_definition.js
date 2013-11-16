@@ -88,7 +88,6 @@ describe("Parcheesi Core", function () {
             medianDeviation.should.be.within(0, 0.1);
         });
     });
-    
 });
 
 
