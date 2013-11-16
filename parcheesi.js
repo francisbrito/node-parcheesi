@@ -3,20 +3,31 @@
 
 var Player = function (color) {
     var player = {
-        'color': color
+        'color': color,
+        'pawns': new Array(4)
     };
-    
+
     return player;
 };
 exports.Player = Player;
 
+//TODO: this should use the constructor javascript pattern 
 var ParcheesiGame = function (numberOfPlayers) {
     var i, 
         realNumberOfPlayers = numberOfPlayers || 2,
         colors = ['red', 'blue', 'yellow', 'green'],
+        
+        randomize = function(min, max){
+            // http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        },
+
         game = {
             spaces: new Array(64),
-            players: []
+            players: [],
+            throwDices: function(){
+                return [randomize(1,6),randomize(1,6)];
+            }
         };
     
     if (realNumberOfPlayers > 4){
