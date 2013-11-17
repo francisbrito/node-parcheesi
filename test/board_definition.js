@@ -15,7 +15,17 @@ describe("Parcheesi Core", function () {
         });
 
         it("should have a starting point (home) for each player", function () {
-            assert.fail();
+            var game = new parcheesi.ParcheesiGame();
+            
+            for (var i = parcheesi.CONSTANTS.colors.length - 1; i >= 0; i--) {
+                assert(game.spaces[i*17 + 5].isStartingSpace());
+            };
+        });
+
+        it("should know all four starting spaces assigned on the board", function(){
+            var game = new parcheesi.ParcheesiGame();
+
+
         });
 
         it("should have a player-specific starway to heaven", function () {
