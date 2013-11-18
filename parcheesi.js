@@ -45,17 +45,15 @@ var Space = function(i, createAsSafe, startPointColor) {
         return new Space(createAsSafe, startPointColor);
     }
 
-    var safeSpot = createAsSafe || false,
-        color = startPointColor,
-        space = {
+    var space = {
             pawns: [],
 
             isSafe: function() {
-                return safeSpot;
+                return createAsSafe || false;
             },
 
             isStartingSpace: function() {
-                return color;
+                return startPointColor;
             },
 
             currentIndex: function() {
@@ -105,8 +103,23 @@ var ParcheesiGame = function(numberOfPlayers) {
             return spaces;
         },
 
+        generateStairs = function(){
+            var stairs = new Array(4);
+
+            for (var i = 0; i < stairs.length; i += 1)
+            {
+                stairs[i] = {
+                    color: CONSTANTS.colors[i].name,
+                    spaces: []
+                };
+            }
+
+            return stairs;
+        },
+
         game = {
             spaces: generateSpaces(),
+            stairs: generateStairs(),
             players: [],
 
             throwDices: function() {
