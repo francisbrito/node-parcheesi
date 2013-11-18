@@ -49,8 +49,8 @@ describe('Parcheesi Core', function () {
         it('should have a double dice system', function () {
             var game = new parcheesi.ParcheesiGame();
 
-            var dice_throw = game.throwDices();
-            assert(dice_throw !== undefined)
+            var diceThrow = game.throwDices();
+            assert(diceThrow !== undefined)
         });
 
         it('should have random entries for dice throw', function () {
@@ -61,7 +61,7 @@ describe('Parcheesi Core', function () {
             var game = new parcheesi.ParcheesiGame();            
 
             //Let's throw the dice many times and check distribution
-            var expected_distribution = 1000/6;
+            var expectedDistribution = 1000/6;
             var distributions = [0,0,0,0,0,0];
 
             for(var i = 0; i < 1000; i += 1){
@@ -74,8 +74,8 @@ describe('Parcheesi Core', function () {
             var deviations = [];
             var deviationSum = 0.0;
             for (var j = 0; j <6; j += 1) {
-                var valueDiff = Math.abs(distributions[j] - expected_distribution);
-                var dev = (valueDiff/expected_distribution).toFixed(2);
+                var valueDiff = Math.abs(distributions[j] - expectedDistribution);
+                var dev = (valueDiff/expectedDistribution).toFixed(2);
                 
                 deviationSum += Number(dev);
                 deviations.push(dev);

@@ -2,7 +2,7 @@
 /*global require, console, exports*/
 
 var CONSTANTS = (function() {
-    'use strict';   
+    'use strict';
 
     var ParcheesiConstants = {
         colors: [ {name: 'red', startPoint: (17 * 0) + 5},
@@ -37,7 +37,7 @@ var Space = function(createAsSafe, startPointColor){
 
     var safeSpot = createAsSafe || false,
         color    = startPointColor,
-        space    = {        
+        space    = {
                         pawns  : [],
                         isSafe : function(){
                             return safeSpot;
@@ -60,7 +60,7 @@ var ParcheesiGame = function (numberOfPlayers) {
 
     var i,
         realNumberOfPlayers = numberOfPlayers || 2,
-        colors              = CONSTANTS.colors,        
+        colors              = CONSTANTS.colors,
         
         randomize = function (min, max) {
             // http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range
@@ -71,16 +71,18 @@ var ParcheesiGame = function (numberOfPlayers) {
             var i      = 0,
                 spaces = new Array(68);
 
-            for (i = spaces.length - 1; i >= 0; i--) {
-                var quarter_section = Math.floor(i/17);
-                var isSpecial = (i == quarter_section * 17 + 0) ||
-                                (i == quarter_section * 17 + 5) ||
-                                (i == quarter_section * 17 + 12);
+            for (i = spaces.length - 1; i >= 0; i -= 1) {
+                //TODO:Need to take these variable declarations from outside this loop
+                //(javascript closures f**k up the assignments)
+                var quarterSection = Math.floor(i/17);
+                var isSpecial = (i === quarterSection * 17 + 0) ||
+                                (i === quarterSection * 17 + 5) ||
+                                (i === quarterSection * 17 + 12);
                 
-                var isStartingSpace = (i == quarter_section * 17 + 5);
+                var isStartingSpace = ();
 
-                spaces[i] = new Space(isSpecial, isStartingSpace);
-            };
+                spaces[i] = new Space(isSpecial, i === quarterSection * 17 + 5);
+            }
             return spaces;
         },
         
