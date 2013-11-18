@@ -13,13 +13,17 @@ describe('Parcheesi Core', function () {
             assert.fail();
         });
         
-        it('can't occupy the same safe space as an oponent's Pawn', function(){
+        it('can\'t occupy the same safe space as an oponent\'s Pawn', function(){
             assert.fail();
         });
 
         it('should form a barrier if two occupy the same space', function(){
             assert.fail();
-        });        
+        });
+
+        it('cannot occupy a space where there are already two pawns', function(){
+
+        });      
 
         it('blocks entry to other player\'s stairway entrance', function(){
             assert.fail();

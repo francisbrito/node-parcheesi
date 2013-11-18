@@ -25,6 +25,8 @@ describe('Parcheesi Core', function () {
         it('should know all four starting spaces assigned on the board', function(){
             var game = new parcheesi.ParcheesiGame();
 
+            
+
             assert.fail();
         });
 

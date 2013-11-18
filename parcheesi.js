@@ -39,6 +39,7 @@ var Space = function(createAsSafe, startPointColor){
         color    = startPointColor,
         space    = {
                         pawns  : [],
+                        //TODO: will probably have to change this to simple variables to query easier
                         isSafe : function(){
                             return safeSpot;
                         },
