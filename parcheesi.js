@@ -1,22 +1,32 @@
 /*jslint browser: false, nomen: true, white: true*/
 /*global require, console, exports*/
 
+var _und = require('underscore');
+
 var CONSTANTS = (function() {
     'use strict';
 
     var ParcheesiConstants = {
-        colors: [ {name: 'red', startPoint: (17 * 0) + 5},
-                  {name: 'blue', startPoint: (17 * 1) + 5},
-                  {name:'yellow', startPoint: (17 * 2) + 5},
-                  {name:'green', startPoint: (17 * 3) + 5}
-                ]
+        colors: [{
+            name: 'red',
+            startPoint: (17 * 0) + 5
+        }, {
+            name: 'blue',
+            startPoint: (17 * 1) + 5
+        }, {
+            name: 'yellow',
+            startPoint: (17 * 2) + 5
+        }, {
+            name: 'green',
+            startPoint: (17 * 3) + 5
+        }]
     };
 
-    return ParcheesiConstants ;
+    return ParcheesiConstants;
 }());
 exports.CONSTANTS = CONSTANTS;
 
-var Player = function (color) {
+var Player = function(color) {
     'use strict';
     var player = {
         'color': color,
@@ -27,7 +37,7 @@ var Player = function (color) {
 };
 exports.Player = Player;
 
-var Space = function(createAsSafe, startPointColor){
+var Space = function(i, createAsSafe, startPointColor) {
     'use strict';
 
     // enforces new
@@ -36,22 +46,27 @@ var Space = function(createAsSafe, startPointColor){
     }
 
     var safeSpot = createAsSafe || false,
-        color    = startPointColor,
-        space    = {
-                        pawns  : [],
-                        //TODO: will probably have to change this to simple variables to query easier
-                        isSafe : function(){
-                            return safeSpot;
-                        },
-                        isStartingSpace: function(){
-                            return color;
-                        }
-                    };
+        color = startPointColor,
+        space = {
+            pawns: [],
+
+            isSafe: function() {
+                return safeSpot;
+            },
+
+            isStartingSpace: function() {
+                return color;
+            },
+
+            currentIndex: function() {
+                return i;
+            }
+        };
 
     return space;
 };
 
-var ParcheesiGame = function (numberOfPlayers) {
+var ParcheesiGame = function(numberOfPlayers) {
     'use strict';
 
     //Checks that object is always constructed using 'new'
@@ -61,47 +76,54 @@ var ParcheesiGame = function (numberOfPlayers) {
 
     var i,
         realNumberOfPlayers = numberOfPlayers || 2,
-        colors              = CONSTANTS.colors,
-        
-        randomize = function (min, max) {
+        colors = CONSTANTS.colors,
+
+        randomize = function(min, max) {
             // http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range
             return Math.floor(Math.random() * (max - min + 1) + min);
         },
 
-        generateSpaces = function(){
-            var i      = 0,
+        generateSpaces = function() {
+            var i = 0,
                 spaces = new Array(68);
 
             for (i = spaces.length - 1; i >= 0; i -= 1) {
                 //TODO:Need to take these variable declarations from outside this loop
                 //(javascript closures f**k up the assignments)
-                var quarterSection = Math.floor(i/17);
+                var quarterSection = Math.floor(i / 17);
+
                 var isSpecial = (i === quarterSection * 17 + 0) ||
                                 (i === quarterSection * 17 + 5) ||
                                 (i === quarterSection * 17 + 12);
 
-                spaces[i] = new Space(isSpecial, i === quarterSection * 17 + 5);
+                var startingSpace = (i === quarterSection * 17 + 5)
+                                    ? CONSTANTS.colors[quarterSection].name 
+                                    : false;
+
+                spaces[i] = new Space(i, isSpecial, startingSpace);
             }
             return spaces;
         },
-        
+
         game = {
             spaces: generateSpaces(),
             players: [],
-            
+
             throwDices: function() {
                 return [randomize(1, 6), randomize(1, 6)];
             },
 
-            getStartingPoint: function(colorName) {
-                //TODO: How to do this query? _underscore collection query?
+            getStartingSpace: function(colorName) {
+                return _und.filter(this.spaces, function(item) {
+                    return item.isStartingSpace() === colorName;
+                });
             },
 
             drawBoard: function() {
                 console.log('someday a board will be drawn here');
             }
         };
-    
+
     if (realNumberOfPlayers > 4) {
         throw new Error('Wrong number of players');
     }
@@ -113,4 +135,3 @@ var ParcheesiGame = function (numberOfPlayers) {
     return game;
 };
 exports.ParcheesiGame = ParcheesiGame;
-
