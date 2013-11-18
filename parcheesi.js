@@ -78,8 +78,6 @@ var ParcheesiGame = function (numberOfPlayers) {
                 var isSpecial = (i === quarterSection * 17 + 0) ||
                                 (i === quarterSection * 17 + 5) ||
                                 (i === quarterSection * 17 + 12);
-                
-                var isStartingSpace = ();
 
                 spaces[i] = new Space(isSpecial, i === quarterSection * 17 + 5);
             }
