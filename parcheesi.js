@@ -127,6 +127,7 @@ var ParcheesiGame = function(numberOfPlayers) {
             spaces: generateSpaces(),
             stairs: generateStairs(),
             players: [],
+            moveLog: [],
 
             currentTurn: function() {
                 return currentTurn;
@@ -153,6 +154,20 @@ var ParcheesiGame = function(numberOfPlayers) {
                 console.log('someday a board will be drawn here');
             },
 
+            manageTurn: function(playerIndex, pawnIndex, nextPosition, diceRoll) {
+                if (this.moveLog.length === 0)
+                    this.moveLog.push({
+                        "playerIndex": playerIndex,
+                        "usedMoves":  []
+                    });
+
+                var lastEntry = _und.last(this.moveLog);
+                if (lastEntry.playerIndex == playerIndex){
+                    lastEntry.usedMoves.push(diceRoll);
+                }
+
+            },
+
             enterPawn: function(playerIndex) {
                 var player = this.players[playerIndex];
                 if (player === undefined)
@@ -168,12 +183,15 @@ var ParcheesiGame = function(numberOfPlayers) {
                 if (!_und.contains(this.lastDiceThrow(), 5)){
                     throw new Error('Player must roll a five(5) to enter pawn');
                 }
-
+                
                 var pawn = _und.first(reduced);
-
                 var startingSpace = this.getStartingSpace(player.color);
+                
                 startingSpace.pawns.push(pawn);
-                pawn.position = startingSpace.position;
+                pawn.position = startingSpace.currentIndex();
+
+                //TODO: need to find a way to pass the index of the pawn here
+                this.manageTurn(playerIndex, undefined, startingSpace.currentIndex(), 5);
             },
 
             movePawn: function(playerIndex, pawnIndex, movesToMake) {
@@ -207,6 +225,9 @@ var ParcheesiGame = function(numberOfPlayers) {
                     pawn.position = nextPosition;
                     //TODO: maybe the pawn could have an event emitter, and each time we 
                     //change the position then it would simply move to the right position
+
+                    this.manageTurn(playerIndex, pawnIndex, nextPosition, movesToMake);
+
                 } else {
                     throw new Error('Unexpected error. The pawn wasn\'t on the allocated space');
                 }
@@ -223,7 +244,7 @@ var ParcheesiGame = function(numberOfPlayers) {
         game.players.push(new Player(CONSTANTS.colors[i]));
     }
 
-    currentTurn = randomize(0, 3);
+    currentTurn = randomize(0, realNumberOfPlayers-1);
 
     return game;
 };
