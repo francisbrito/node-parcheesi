@@ -5,6 +5,7 @@
 
 var assert = require('assert'),
     parcheesi = require('./../parcheesi'),
+    utils = require('./test_utils'),
     game;
 
 describe('Parcheesi Core', function () {
@@ -44,41 +45,24 @@ describe('Parcheesi Core', function () {
 
         it('should have a double dice system', function () {
             var diceThrow = game.throwDices();
-            assert(diceThrow !== undefined)
+            diceThrow.should.not.equal(undefined);
+            diceThrow.length.should.equal(2);
         });
 
         it('should have random entries for dice throw', function () {
-            //This is a complicated test and I still don't get it that well :P
-            //http://programmers.stackexchange.com/questions/147134/how-should-i-test-randomness
-            //http://math.stackexchange.com/questions/2435/is-there-a-simple-test-for-uniform-distributions     
-
             //Let's throw the dice many times and check distribution
             var expectedDistribution = 1000/6;
             var distributions = [0,0,0,0,0,0];
 
             for(var i = 0; i < 1000; i += 1){
                 var firstDiceRoll = game.throwDices()[0];
-                distributions[firstDiceRoll-1] += 1; 
-            };
-            console.log('\nDistributions: ' + distributions);
-
-            //Calculate the median deviation of each observed roll aggregate:
-            var deviations = [];
-            var deviationSum = 0.0;
-            for (var j = 0; j <6; j += 1) {
-                var valueDiff = Math.abs(distributions[j] - expectedDistribution);
-                var dev = (valueDiff/expectedDistribution).toFixed(2);
-                
-                deviationSum += Number(dev);
-                deviations.push(dev);
+                distributions[firstDiceRoll-1] += 1;
             }
-
-            var medianDeviation = (deviationSum/6);
             
-            console.log('Deviations: ' + deviations);
-            console.log('Median Deviation: ' + medianDeviation.toFixed(2));
+            //Calculate the median deviation of each observed roll aggregate:
+            var medianDeviaton = utils.calculateMedianDeviation(distributions, expectedDistribution);
 
-            medianDeviation.should.be.within(0, 0.1);
+            medianDeviaton.should.be.within(0, 0.1);
         });
     });
 });

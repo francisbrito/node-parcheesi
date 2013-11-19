@@ -133,6 +133,7 @@ var ParcheesiGame = function(numberOfPlayers) {
             spaces: generateSpaces(),
             stairs: generateStairs(),
             players: [],
+            currentTurn: -1,
 
             throwDices: function() {
                 return [randomize(1, 6), randomize(1, 6)];
@@ -192,6 +193,8 @@ var ParcheesiGame = function(numberOfPlayers) {
     for (i = 0; i < realNumberOfPlayers; i += 1) {
         game.players.push(new Player(colors[i]));
     }
+
+    game.currentTurn = randomize(0,3);
 
     return game;
 };

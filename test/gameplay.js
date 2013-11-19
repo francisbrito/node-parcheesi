@@ -1,16 +1,33 @@
-/*jslint browser: false, nomen: true, sloppy: true*/
-/*global require, describe, it, console*/
+/*jslint browser: false, nomen: true, sloppy: true */
+/*global require, describe, it, beforeEach, console */
 
 //Important: these are the DOMINICAN REPUBLIC rules for playing 'parché'
 
-var assert = require('assert');
-var parcheesi = require('./../parcheesi');
+var assert = require('assert'),
+    parcheesi = require('./../parcheesi'),
+    utils = require('./test_utils'),
+    game;
 
 
 describe('Parcheesi Core', function() {
     describe('Gameplay', function() {
+        beforeEach(function(){
+            game = new parcheesi.ParcheesiGame();
+        });
+
         it('should define the first turn randomly', function() {
-            assert.fail();
+            //Let's start the game many times and check distribution
+            var expectedDistribution = 100/4;
+            var distributions = [0,0,0,0];
+            for (var i = 0; i < 100; i += 1){
+                game = new parcheesi.ParcheesiGame();
+                distributions[game.currentTurn]++;
+            }
+            
+            //Calculate the median deviation of each observed roll aggregate:
+            var medianDeviaton = utils.calculateMedianDeviation(distributions, expectedDistribution);
+
+            medianDeviaton.should.be.within(0, 0.1);
         });
 
         it('should convert the value of six(6) to twelve(12)', function() {
