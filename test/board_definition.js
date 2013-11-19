@@ -56,6 +56,7 @@ describe('Parcheesi Core', function() {
 
         it('should allow a player to move a pawn', function() {
             //mocking the places
+            
             var pawn = game.players[0].pawns[0];
             pawn.position = 5;
             game.spaces[5].pawns.push(pawn);

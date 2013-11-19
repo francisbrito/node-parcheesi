@@ -76,8 +76,13 @@ describe('Parcheesi Core', function() {
             
         });
 
-        it.skip('should allow the player to take out two Pawns when a double five (5/5) is rolled', function() {
-            assert.fail();
+        it('should allow the player to take out two Pawns when a double five (5/5) is rolled', function() {
+            sinon.stub(game, 'throwDices').returns([5,5]);
+            sinon.stub(game, 'lastDiceThrow').returns([5,5]);
+
+            game.enterPawn(0);
+            game.enterPawn(0);
+            game.spaces[5].pawns.length.should.equal(2);
         });
 
         it.skip('should assign the player another turn if a double is rolled', function() {

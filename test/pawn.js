@@ -9,54 +9,54 @@ var parcheesi = require('./../parcheesi');
 
 describe('Parcheesi Core', function() {
     describe('Pawn', function() {
-        it('cannot move more spaces than the ones on the dice throw', function() {
+        it.skip('cannot move more spaces than the ones on the dice throw', function() {
             assert.fail();
         });
 
         //TODO: It needs to move EXACTLY the spaces on the dice
 
-        it('can\'t occupy the same safe space as an oponent\'s Pawn', function() {
+        it.skip('can\'t occupy the same safe space as an oponent\'s Pawn', function() {
             assert.fail();
         });
 
-        it('should form a barrier if two occupy the same space', function() {
+        it.skip('should form a barrier if two occupy the same space', function() {
             assert.fail();
         });
 
-        it('cannot occupy a space where there are already two pawns', function() {
+        it.skip('cannot occupy a space where there are already two pawns', function() {
 
         });
 
-        it('blocks entry to other player\'s stairway entrance', function() {
+        it.skip('blocks entry to other player\'s stairway entrance', function() {
             assert.fail();
         });
 
-        it('blocks entry to other player\'s starting point', function() {
+        it.skip('blocks entry to other player\'s starting point', function() {
             assert.fail();
         });
 
-        it('can kill another pawn blocking the entry on stairway if a double one (1/1) is rolled', function() {
+        it.skip('can kill another pawn blocking the entry on stairway if a double one (1/1) is rolled', function() {
             assert.fail();
         });
 
-        it('can kill another pawn blocking the starting point if a double five (5/5) is rolled', function() {
+        it.skip('can kill another pawn blocking the starting point if a double five (5/5) is rolled', function() {
             assert.fail();
         });
 
-        it('should return to the home container if killed', function() {
+        it.skip('should return to the home container if killed', function() {
             assert.fail();
         });
 
-        it('should play complete dice roll if it\'s the only pawn on the board', function() {
+        it.skip('should play complete dice roll if it\'s the only pawn on the board', function() {
             assert.fail();
         });
 
-        it('succesfully spawns a new pawn after rolling double five (5/5) and killing an oponent\'s ' +
+        it.skip('succesfully spawns a new pawn after rolling double five (5/5) and killing an oponent\'s ' +
             'pawn which has blocking the starting point', function() {
                 assert.fail();
             });
 
-        it('should enforce all previous rules inside the staircases as well', function () {
+        it.skip('should enforce all previous rules inside the staircases as well', function () {
             //TODO: determine how to test for this withouth running all the tests again?
             assert.fail();
         });
