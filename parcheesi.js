@@ -9,16 +9,16 @@ var CONSTANTS = (function() {
     var ParcheesiConstants = {
         colors: [{
             name: 'red',
-            startPoint: (17 * 0) + 5
+            startPoint: 5
         }, {
             name: 'blue',
-            startPoint: (17 * 1) + 5
+            startPoint: 22
         }, {
             name: 'yellow',
-            startPoint: (17 * 2) + 5
+            startPoint: 39
         }, {
             name: 'green',
-            startPoint: (17 * 3) + 5
+            startPoint: 56
         }]
     };
 
@@ -26,7 +26,8 @@ var CONSTANTS = (function() {
 }());
 exports.CONSTANTS = CONSTANTS;
 
-var Pawn = function(color){
+var Pawn = function(color) {
+    'use strict';
     return {
         'color': color,
         'position': -1
@@ -36,15 +37,16 @@ exports.Pawn = Pawn;
 
 var Player = function(color) {
     'use strict';
-    var player = {
-        'color': color,
-        'pawns': [,,,]
-    };
 
-    for (var i = 4 - 1; i >= 0; i--) {
+    var i,
+        player = {
+            'color': color,
+            'pawns': new Array(4)
+        };
+
+    for (i = 0; i < 4; i += 1) {
         player.pawns[i] = new Pawn(color);
     }
-
     return player;
 };
 exports.Player = Player;
@@ -58,20 +60,20 @@ var Space = function(i, createAsSafe, startPointColor) {
     }
 
     var space = {
-            pawns: [],
+        pawns: [],
 
-            isSafe: function() {
-                return createAsSafe || false;
-            },
+        isSafe: function() {
+            return createAsSafe || false;
+        },
 
-            isStartingSpace: function() {
-                return startPointColor;
-            },
+        isStartingSpace: function() {
+            return startPointColor;
+        },
 
-            currentIndex: function() {
-                return i;
-            }
-        };
+        currentIndex: function() {
+            return i;
+        }
+    };
 
     return space;
 };
@@ -97,32 +99,30 @@ var ParcheesiGame = function(numberOfPlayers) {
             var i = 0,
                 spaces = new Array(68);
 
-            for (i = spaces.length - 1; i >= 0; i -= 1) {
+            for (i = 0; i < spaces.length; i += 1) {
                 //TODO:Need to take these variable declarations from outside this loop
                 //(javascript closures f**k up the assignments)
                 var quarterSection = Math.floor(i / 17);
 
-                var isSpecial = (i === quarterSection * 17 + 0) ||
-                                (i === quarterSection * 17 + 5) ||
-                                (i === quarterSection * 17 + 12);
+                var isSpecial =
+                    (i === quarterSection * 17 + 0) ||
+                    (i === quarterSection * 17 + 5) ||
+                    (i === quarterSection * 17 + 12);
 
-                var startingSpace = (i === quarterSection * 17 + 5)
-                                    ? CONSTANTS.colors[quarterSection].name 
-                                    : false;
+                var startingSpace = (i === quarterSection * 17 + 5) ? CONSTANTS.colors[quarterSection].name : false;
 
                 spaces[i] = new Space(i, isSpecial, startingSpace);
             }
             return spaces;
         },
 
-        generateStairs = function(){
-            var stairs = new Array(4);
+        generateStairs = function() {
+            var i, stairs = new Array(4);
 
-            for (var i = 0; i < stairs.length; i += 1)
-            {
+            for (i = 0; i < stairs.length; i += 1) {
                 stairs[i] = {
                     color: CONSTANTS.colors[i].name,
-                    spaces: [,,,,,,,,]
+                    spaces: new Array(8)
                 };
             }
 
@@ -149,8 +149,8 @@ var ParcheesiGame = function(numberOfPlayers) {
             },
 
             //TODO: Implement error management?
-            movePawn: function(playerIndex, pawnIndex, movesToMake){
-                
+            movePawn: function(playerIndex, pawnIndex, movesToMake) {
+
                 var player = this.players[playerIndex];
                 if (player === undefined)
                     throw new Error('Player is not defined');
@@ -172,14 +172,13 @@ var ParcheesiGame = function(numberOfPlayers) {
                 var currentSpace = this.spaces[currentPosition];
                 var nextSpace = this.spaces[nextPosition];
 
-                if (_und.contains(currentSpace.pawns, pawn)){
+                if (_und.contains(currentSpace.pawns, pawn)) {
                     currentSpace.pawns = _und.without(currentSpace.pawns, pawn);
                     nextSpace.pawns.push(pawn);
                     pawn.position = nextPosition;
                     //TODO: maybe the pawn could have an event emitter, and each time we 
                     //change the position then it would simply move to the right position
-                }
-                else {
+                } else {
                     throw new Error('Unexpected error. The pawn wasn\'t on the allocated space');
                 }
 

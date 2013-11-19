@@ -109,7 +109,7 @@ describe('Parcheesi Core', function() {
 
             game.movePawn(3,0,5);
 
-            pawn.position.should.be.above(0);
+            pawn.position.should.equal(4);
         });
 
     });
