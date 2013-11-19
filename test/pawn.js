@@ -53,5 +53,10 @@ describe('Parcheesi Core', function() {
             'pawn which has blocking the starting point', function() {
                 assert.fail();
             });
+
+        it('should enforce all previous rules inside the staircases as well', function () {
+            //TODO: determine how to test for this withouth running all the tests again?
+            assert.fail();
+        });
     });
 });

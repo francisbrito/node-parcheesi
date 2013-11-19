@@ -26,12 +26,24 @@ var CONSTANTS = (function() {
 }());
 exports.CONSTANTS = CONSTANTS;
 
+var Pawn = function(color){
+    return {
+        'color': color,
+        'position': -1
+    };
+};
+exports.Pawn = Pawn;
+
 var Player = function(color) {
     'use strict';
     var player = {
         'color': color,
-        'pawns': new Array(4)
+        'pawns': [,,,]
     };
+
+    for (var i = 4 - 1; i >= 0; i--) {
+        player.pawns[i] = new Pawn(color);
+    }
 
     return player;
 };
@@ -110,7 +122,7 @@ var ParcheesiGame = function(numberOfPlayers) {
             {
                 stairs[i] = {
                     color: CONSTANTS.colors[i].name,
-                    spaces: []
+                    spaces: [,,,,,,,,]
                 };
             }
 
@@ -134,6 +146,43 @@ var ParcheesiGame = function(numberOfPlayers) {
 
             drawBoard: function() {
                 console.log('someday a board will be drawn here');
+            },
+
+            //TODO: Implement error management?
+            movePawn: function(playerIndex, pawnIndex, movesToMake){
+                
+                var player = this.players[playerIndex];
+                if (player === undefined)
+                    throw new Error('Player is not defined');
+
+                var pawn = player.pawns[pawnIndex];
+                if (pawn === undefined)
+                    throw new Error('Pawn is not defined');
+
+                //TODO:rules of movement will eventually go here?
+
+                var currentPosition = pawn.position || -1;
+                if (currentPosition === -1)
+                    throw new Error('Pawn is still inside player\'s home');
+
+                var nextPosition = currentPosition + movesToMake;
+                if (nextPosition > 67)
+                    nextPosition = nextPosition - 68;
+
+                var currentSpace = this.spaces[currentPosition];
+                var nextSpace = this.spaces[nextPosition];
+
+                if (_und.contains(currentSpace.pawns, pawn)){
+                    currentSpace.pawns = _und.without(currentSpace.pawns, pawn);
+                    nextSpace.pawns.push(pawn);
+                    pawn.position = nextPosition;
+                    //TODO: maybe the pawn could have an event emitter, and each time we 
+                    //change the position then it would simply move to the right position
+                }
+                else {
+                    throw new Error('Unexpected error. The pawn wasn\'t on the allocated space');
+                }
+
             }
         };
 

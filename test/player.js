@@ -9,6 +9,10 @@ var parcheesi = require('./../parcheesi');
 
 describe('Parcheesi Core', function () {
     describe('Player', function(){
+        it('should start the game with four pawns', function () {
+            assert.fail();
+        });
+
         it('should be able to roll the dice', function(){
             assert.fail();
         });        
