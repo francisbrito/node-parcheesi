@@ -24,7 +24,6 @@ exports.calculateMedianDeviation = function(occurrenceArray, expectedDistributio
 };
 
 exports.emulatePlay = function(game, playerToEmulate){
-	debugger
 	var diceRoll = game.throwDices();
 	game.movePawn(playerToEmulate, 0, diceRoll[0]);
 	game.movePawn(playerToEmulate, 0, diceRoll[1]);

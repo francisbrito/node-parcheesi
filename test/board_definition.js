@@ -1,4 +1,4 @@
-/*jslint browser: false, nomen: true, sloppy: true */
+/*jslint browser: false, nomen: true, sloppy: true, es5: true */
 /*global require, describe, it, beforeEach, console */
 
 //Important: these are the DOMINICAN REPUBLIC rules for playing 'parché'

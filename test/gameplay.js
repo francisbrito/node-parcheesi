@@ -1,4 +1,4 @@
-/*jslint browser: false, nomen: true, sloppy: true */
+/*jslint browser: false, nomen: true, sloppy: true, es5: true */
 /*global require, describe, it, beforeEach, console */
 
 //Important: these are the DOMINICAN REPUBLIC rules for playing 'parché'
@@ -20,26 +20,29 @@ describe('Parcheesi Core', function() {
         it('should define the first turn randomly', function() {
             //Let's start the game many times and check distribution
 
-            var expectedDistribution = 100 / 4;
-            var distributions = [0, 0, 0, 0];
-            for (var i = 0; i < 100; i += 1) {
+            var i,
+                medianDeviaton,
+                expectedDistribution = 100 / 4,
+                distributions = [0, 0, 0, 0];
+
+            for (i = 0; i < 100; i += 1) {
                 game = new parcheesi.ParcheesiGame(4);
-                distributions[game.currentTurn()]++;
+                distributions[game.currentTurn()] += 1;
             }
 
             console.log(distributions);
 
             //Calculate the median deviation of each observed roll aggregate:
-            var medianDeviaton = utils.calculateMedianDeviation(distributions, expectedDistribution);
+            medianDeviaton = utils.calculateMedianDeviation(distributions, expectedDistribution);
 
             medianDeviaton.should.be.within(0, 0.25);
         });
 
         it('should define the first turn randomly, but limit it to the number of players', function() {
-            var distributions = [];
-            for (var i = 0; i < 100; i += 1) {
+            var i, distributions = [];
+            for (i = 0; i < 100; i += 1) {
                 game = new parcheesi.ParcheesiGame(2);
-                distributions[game.currentTurn()]++;
+                distributions[game.currentTurn()] += 1;
             }
 
             distributions.length.should.equal(2);
@@ -62,9 +65,7 @@ describe('Parcheesi Core', function() {
 
             (function() {
                 game.enterPawn(0);
-            })
-                .should.
-            throw ('All player\'s pawns are outside of the Home');
+            }).should.throw('All player\'s pawns are outside of the Home');
         });
 
         it('should allow players to take out a Pawn when a five(5/x) is rolled', function() {
@@ -87,10 +88,7 @@ describe('Parcheesi Core', function() {
 
             (function() {
                 game.enterPawn(0);
-            })
-                .should.
-            throw ('Player must roll a five(5) to enter pawn');
-
+            }).should.throw('Player must roll a five(5) to enter pawn');
         });
 
         it('should allow the player to take out two Pawns when a double five (5/5) is rolled', function() {
@@ -107,7 +105,7 @@ describe('Parcheesi Core', function() {
             sinon.stub(game, 'throwDices').returns([5, 4]);
             sinon.stub(game, 'lastDiceThrow').returns([5, 4]);
 
-            var diceRoll = game.throwDices();
+            game.throwDices();
             game.enterPawn(game.currentTurn());
 
             _und.last(game.moveLog).usedMoves.should.contain(5);
@@ -117,7 +115,7 @@ describe('Parcheesi Core', function() {
             sinon.stub(game, 'throwDices').returns([5, 4]);
             sinon.stub(game, 'lastDiceThrow').returns([5, 4]);
 
-            var diceRoll = game.throwDices();
+            game.throwDices();
             var currentTurn = game.currentTurn();
 
             game.enterPawn(currentTurn);
@@ -128,46 +126,50 @@ describe('Parcheesi Core', function() {
 
         it('should pass the turn after all player moves are made on the board', function() {
             //Here we really need to throw the dice until 5 comes up
-            var diceRoll = [];
-            while (!_und.contains(diceRoll, 5)){
+            var diceRoll,
+                currentTurn,
+                withouthFives,
+                nextPawnToPlay;
+
+            while (!_und.contains(diceRoll, 5)) {
                 diceRoll = game.throwDices();
             }
 
-            var currentTurn = game.currentTurn();
-            var last = game.lastDiceThrow();
-
-            var withouthFives = _und.without(diceRoll, 5);
-            var nextPawnToPlay = withouthFives.length === 0 ? 5 : withouthFives[0];
+            currentTurn = game.currentTurn();
+            withouthFives = _und.without(diceRoll, 5);
+            nextPawnToPlay = withouthFives.length === 0 ? 5 : withouthFives[0];
 
             game.enterPawn(currentTurn);
             game.movePawn(currentTurn, 0, nextPawnToPlay);
-            
+
             game.currentTurn().should.not.eql(currentTurn);
         });
 
-        it('should limit the turn number according to the quantity of players', function(){
+        it('should limit the turn number according to the quantity of players', function() {
             //setup
-            game = new parcheesi.ParcheesiGame(3);
+            var pawn1, pawn2, pawn3,
+                currentTurn,
+                game = new parcheesi.ParcheesiGame(3);
 
-            var pawn1 = game.players[0].pawns[0];
+            pawn1 = game.players[0].pawns[0];
             pawn1.position = 5;
             game.spaces[5].pawns.push(pawn1);
 
-            var pawn2 = game.players[1].pawns[0];
+            pawn2 = game.players[1].pawns[0];
             pawn2.position = 22;
             game.spaces[22].pawns.push(pawn2);
 
-            var pawn3 = game.players[2].pawns[0];
+            pawn3 = game.players[2].pawns[0];
             pawn3.position = 39;
             game.spaces[39].pawns.push(pawn3);
 
-            var currentTurn = game.currentTurn();
+            currentTurn = game.currentTurn();
             utils.emulatePlay(game, currentTurn);
-            
-            currentTurn = currentTurn + 1 == 3 ? 0 : currentTurn;
+
+            currentTurn = currentTurn + 1 === 3 ? 0 : currentTurn;
             utils.emulatePlay(game, currentTurn);
-            
-            currentTurn = currentTurn + 1 == 3 ? 0 : currentTurn;
+
+            currentTurn = currentTurn + 1 === 3 ? 0 : currentTurn;
             utils.emulatePlay(game, 2);
 
             console.log(game.currentTurn());

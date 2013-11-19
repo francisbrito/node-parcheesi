@@ -1,4 +1,4 @@
-/*jslint browser: false, nomen: true, white: true*/
+/*jslint browser: false, nomen: true, white: true, es5: true */
 /*global require, console, exports*/
 
 var _und = require('underscore');
@@ -91,20 +91,21 @@ var ParcheesiGame = function(numberOfPlayers) {
         },
 
         generateSpaces = function() {
-            var i = 0,
+            var i, quarterSection, 
+                isSpecial, startingSpace,
                 spaces = new Array(68);
 
             for (i = 0; i < spaces.length; i += 1) {
                 //TODO:Need to take these variable declarations from outside this loop
                 //(javascript closures f**k up the assignments)
-                var quarterSection = Math.floor(i / 17);
+                quarterSection = Math.floor(i / 17);
 
-                var isSpecial =
-                    (i === quarterSection * 17 + 0) ||
+                isSpecial =
+                    ((i === quarterSection * 17 + 0) ||
                     (i === quarterSection * 17 + 5) ||
-                    (i === quarterSection * 17 + 12);
+                    (i === quarterSection * 17 + 12));
 
-                var startingSpace = (i === quarterSection * 17 + 5) ? CONSTANTS.colors[quarterSection] : false;
+                startingSpace = (i === quarterSection * 17 + 5) ? CONSTANTS.colors[quarterSection] : false;
 
                 spaces[i] = new Space(i, isSpecial, startingSpace);
             }
@@ -156,20 +157,23 @@ var ParcheesiGame = function(numberOfPlayers) {
             },
 
             manageTurn: function(playerIndex, pawnIndex, nextPosition, diceRoll) {
-                if (this.moveLog.length === 0)
+                if (this.moveLog.length === 0){
                     this.moveLog.push({
                         "playerIndex": playerIndex,
                         "usedMoves":  []
                     });
+                }
 
-                var lastRoll = this.lastDiceThrow();
-                var lastEntry = this.moveLog[moveCounter];
+                var lastRoll = this.lastDiceThrow(),
+                    lastEntry = this.moveLog[moveCounter];
                 
-                if (lastEntry === undefined)
+                if (lastEntry === undefined){
+                    //TODO: This should be a class instance as well, to avoid repetition
                     lastEntry = {
                         "playerIndex": playerIndex,
                         "usedMoves":  []
                     };
+                }
                 
                 //Register last event
                 lastEntry.usedMoves.push(diceRoll);
@@ -177,7 +181,7 @@ var ParcheesiGame = function(numberOfPlayers) {
                 //If player has used all possible moves, change the turn
                 if (_und.difference(lastRoll, lastEntry.usedMoves).length === 0){
                     currentTurn = (currentTurn === realNumberOfPlayers-1) ? 0 : currentTurn + 1;
-                    moveCounter++;
+                    moveCounter += 1;
                 }
             
             },
