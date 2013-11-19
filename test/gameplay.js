@@ -140,8 +140,8 @@ describe('Parcheesi Core', function() {
             var nextPawnToPlay = withouthFives.length === 0 ? 5 : withouthFives[0];
 
             game.enterPawn(currentTurn);
-
             game.movePawn(currentTurn, 0, nextPawnToPlay);
+            
             game.currentTurn().should.not.eql(currentTurn);
         });
 
@@ -157,16 +157,22 @@ describe('Parcheesi Core', function() {
             pawn2.position = 22;
             game.spaces[22].pawns.push(pawn2);
 
-            var pawn3 = game.players[1].pawns[0];
+            var pawn3 = game.players[2].pawns[0];
             pawn3.position = 39;
             game.spaces[39].pawns.push(pawn3);
 
-            utils.emulatePlay(game, 0);
-            utils.emulatePlay(game, 1);
+            var currentTurn = game.currentTurn();
+            utils.emulatePlay(game, currentTurn);
+            
+            currentTurn = currentTurn + 1 == 3 ? 0 : currentTurn;
+            utils.emulatePlay(game, currentTurn);
+            
+            currentTurn = currentTurn + 1 == 3 ? 0 : currentTurn;
             utils.emulatePlay(game, 2);
 
             console.log(game.currentTurn());
             game.currentTurn().should.not.eql(3);
+            //game.currentTurn().should.not.eql(3);
 
         });
 

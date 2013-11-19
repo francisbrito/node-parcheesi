@@ -82,6 +82,7 @@ var ParcheesiGame = function(numberOfPlayers) {
     var i,
         lastDiceRoll,
         currentTurn = -1,
+        moveCounter = 0,
         realNumberOfPlayers = numberOfPlayers || 2,
 
         randomize = function(min, max) {
@@ -162,22 +163,23 @@ var ParcheesiGame = function(numberOfPlayers) {
                     });
 
                 var lastRoll = this.lastDiceThrow();
-                var lastEntry = _und.last(this.moveLog);
+                var lastEntry = this.moveLog[moveCounter];
                 
-                if (lastEntry.playerIndex == playerIndex){
-                    //Register last event
-                    lastEntry.usedMoves.push(diceRoll);
+                if (lastEntry === undefined)
+                    lastEntry = {
+                        "playerIndex": playerIndex,
+                        "usedMoves":  []
+                    };
+                
+                //Register last event
+                lastEntry.usedMoves.push(diceRoll);
 
-                    //If player has used all possible moves, change the turn
-                    if (_und.difference(lastRoll, lastEntry.usedMoves).length === 0){
-                        currentTurn++;
-                        if (currentTurn === realNumberOfPlayers)
-                            currentTurn = 0;
-
-                        //TODO: Refactor (after the test passes)
-                        //currentTurn = (currentTurn === realNumberOfPlayers-1) ? 0 : currentTurn + 1;
-                    }
+                //If player has used all possible moves, change the turn
+                if (_und.difference(lastRoll, lastEntry.usedMoves).length === 0){
+                    currentTurn = (currentTurn === realNumberOfPlayers-1) ? 0 : currentTurn + 1;
+                    moveCounter++;
                 }
+            
             },
 
             enterPawn: function(playerIndex) {
@@ -222,9 +224,9 @@ var ParcheesiGame = function(numberOfPlayers) {
                     throw new Error('Pawn is still inside player\'s home');
 
                 //If program control reaches this point it means that the pawn can move
-                movesToMake = (movesToMake === 6) ? 12 : movesToMake;
+                var totalMovesToMake = (movesToMake === 6) ? 12 : movesToMake;
 
-                var nextPosition = currentPosition + movesToMake;
+                var nextPosition = currentPosition + totalMovesToMake;
                 if (nextPosition > 67)
                     nextPosition = nextPosition - 68;
 
