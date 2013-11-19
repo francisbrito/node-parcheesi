@@ -7,19 +7,12 @@ var CONSTANTS = (function() {
     'use strict';
 
     var ParcheesiConstants = {
-        colors: [{
-            name: 'red',
-            startPoint: 5
-        }, {
-            name: 'blue',
-            startPoint: 22
-        }, {
-            name: 'yellow',
-            startPoint: 39
-        }, {
-            name: 'green',
-            startPoint: 56
-        }]
+        colors: [
+            'red',
+            'blue',
+            'yellow',
+            'green'
+            ]
     };
 
     return ParcheesiConstants;
@@ -110,7 +103,7 @@ var ParcheesiGame = function(numberOfPlayers) {
                     (i === quarterSection * 17 + 5) ||
                     (i === quarterSection * 17 + 12);
 
-                var startingSpace = (i === quarterSection * 17 + 5) ? CONSTANTS.colors[quarterSection].name : false;
+                var startingSpace = (i === quarterSection * 17 + 5) ? CONSTANTS.colors[quarterSection] : false;
 
                 spaces[i] = new Space(i, isSpecial, startingSpace);
             }
@@ -122,7 +115,7 @@ var ParcheesiGame = function(numberOfPlayers) {
 
             for (i = 0; i < stairs.length; i += 1) {
                 stairs[i] = {
-                    color: CONSTANTS.colors[i].name,
+                    color: CONSTANTS.colors[i],
                     spaces: new Array(8)
                 };
             }
@@ -134,24 +127,26 @@ var ParcheesiGame = function(numberOfPlayers) {
             spaces: generateSpaces(),
             stairs: generateStairs(),
             players: [],
-            
-            currentTurn: function(){
+
+            currentTurn: function() {
                 return currentTurn;
             },
 
-            lastDiceThrow: function(){
+            lastDiceThrow: function() {
                 return lastDiceRoll;
             },
 
             throwDices: function() {
                 lastDiceRoll = [randomize(1, 6), randomize(1, 6)];
-                return lastDiceThrow();
+                return this.lastDiceThrow();
             },
 
             getStartingSpace: function(colorName) {
-                return _und.filter(this.spaces, function(item) {
+                var filtered = _und.filter(this.spaces, function(item) {
                     return item.isStartingSpace() === colorName;
                 });
+
+                return _und.first(filtered);
             },
 
             drawBoard: function() {
@@ -163,9 +158,22 @@ var ParcheesiGame = function(numberOfPlayers) {
                 if (player === undefined)
                     throw new Error('Player is not defined');
 
-                var reduced = _und.where(player.pawns, function(item){item.position === -1});
+                var reduced = _und.filter(player.pawns, function(item) {
+                    return item.position === -1;
+                });
+                
                 if (reduced.length === 0)
                     throw new Error('All player\'s pawns are outside of the Home');
+
+                if (!_und.contains(this.lastDiceThrow(), 5)){
+                    throw new Error('Player must roll a five(5) to enter pawn');
+                }
+
+                var pawn = _und.first(reduced);
+
+                var startingSpace = this.getStartingSpace(player.color);
+                startingSpace.pawns.push(pawn);
+                pawn.position = startingSpace.position;
             },
 
             movePawn: function(playerIndex, pawnIndex, movesToMake) {
@@ -184,8 +192,7 @@ var ParcheesiGame = function(numberOfPlayers) {
                     throw new Error('Pawn is still inside player\'s home');
 
                 //If program control reaches this point it means that the pawn can move
-                if (movesToMake === 6)
-                    movesToMake = 12;
+                movesToMake = (movesToMake === 6) ? 12 : movesToMake;
 
                 var nextPosition = currentPosition + movesToMake;
                 if (nextPosition > 67)
@@ -207,6 +214,7 @@ var ParcheesiGame = function(numberOfPlayers) {
             }
         };
 
+        //TODO: Move to methods? this looks like it's 'hanging here'
     if (realNumberOfPlayers > 4) {
         throw new Error('Wrong number of players');
     }
@@ -215,7 +223,7 @@ var ParcheesiGame = function(numberOfPlayers) {
         game.players.push(new Player(CONSTANTS.colors[i]));
     }
 
-    currentTurn = randomize(0,3);
+    currentTurn = randomize(0, 3);
 
     return game;
 };
