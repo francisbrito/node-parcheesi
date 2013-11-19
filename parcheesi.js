@@ -87,8 +87,9 @@ var ParcheesiGame = function(numberOfPlayers) {
     }
 
     var i,
+        lastDiceRoll,
+        currentTurn = -1,
         realNumberOfPlayers = numberOfPlayers || 2,
-        colors = CONSTANTS.colors,
 
         randomize = function(min, max) {
             // http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range
@@ -133,10 +134,18 @@ var ParcheesiGame = function(numberOfPlayers) {
             spaces: generateSpaces(),
             stairs: generateStairs(),
             players: [],
-            currentTurn: -1,
+            
+            currentTurn: function(){
+                return currentTurn;
+            },
+
+            lastDiceThrow: function(){
+                return lastDiceRoll;
+            },
 
             throwDices: function() {
-                return [randomize(1, 6), randomize(1, 6)];
+                lastDiceRoll = [randomize(1, 6), randomize(1, 6)];
+                return lastDiceThrow();
             },
 
             getStartingSpace: function(colorName) {
@@ -149,9 +158,17 @@ var ParcheesiGame = function(numberOfPlayers) {
                 console.log('someday a board will be drawn here');
             },
 
-            //TODO: Implement error management?
-            movePawn: function(playerIndex, pawnIndex, movesToMake) {
+            enterPawn: function(playerIndex) {
+                var player = this.players[playerIndex];
+                if (player === undefined)
+                    throw new Error('Player is not defined');
 
+                var reduced = _und.where(player.pawns, function(item){item.position === -1});
+                if (reduced.length === 0)
+                    throw new Error('All player\'s pawns are outside of the Home');
+            },
+
+            movePawn: function(playerIndex, pawnIndex, movesToMake) {
                 var player = this.players[playerIndex];
                 if (player === undefined)
                     throw new Error('Player is not defined');
@@ -165,6 +182,10 @@ var ParcheesiGame = function(numberOfPlayers) {
                 var currentPosition = pawn.position || -1;
                 if (currentPosition === -1)
                     throw new Error('Pawn is still inside player\'s home');
+
+                //If program control reaches this point it means that the pawn can move
+                if (movesToMake === 6)
+                    movesToMake = 12;
 
                 var nextPosition = currentPosition + movesToMake;
                 if (nextPosition > 67)
@@ -191,10 +212,10 @@ var ParcheesiGame = function(numberOfPlayers) {
     }
 
     for (i = 0; i < realNumberOfPlayers; i += 1) {
-        game.players.push(new Player(colors[i]));
+        game.players.push(new Player(CONSTANTS.colors[i]));
     }
 
-    game.currentTurn = randomize(0,3);
+    currentTurn = randomize(0,3);
 
     return game;
 };

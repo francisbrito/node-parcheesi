@@ -4,7 +4,8 @@
     "dependencies": {
         "mocha": "1.14",
         "should": "2.1.0",
-        "underscore": "1.5.2"
+        "underscore": "1.5.2",
+        "colors": "0.6.2"
     },
     "scripts": {
         "preinstall": "node config_environment.js"
