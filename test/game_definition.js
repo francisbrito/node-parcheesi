@@ -62,7 +62,7 @@ describe('Parcheesi Core', function () {
             //Calculate the median deviation of each observed roll aggregate:
             var medianDeviaton = utils.calculateMedianDeviation(distributions, expectedDistribution);
 
-            medianDeviaton.should.be.within(0, 0.1);
+            medianDeviaton.should.be.within(0, 0.16);
         });
     });
 });

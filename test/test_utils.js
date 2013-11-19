@@ -1,8 +1,8 @@
-exports.calculateMedianDeviation = function (occurrenceArray, expectedDistribution) {
+exports.calculateMedianDeviation = function(occurrenceArray, expectedDistribution) {
 	//This is a complicated test and I still don't get it that well :P
-    //http://programmers.stackexchange.com/questions/147134/how-should-i-test-randomness
-    //http://math.stackexchange.com/questions/2435/is-there-a-simple-test-for-uniform-distributions  
-	
+	//http://programmers.stackexchange.com/questions/147134/how-should-i-test-randomness
+	//http://math.stackexchange.com/questions/2435/is-there-a-simple-test-for-uniform-distributions  
+
 	console.log('\nDistributions: ' + occurrenceArray);
 
 	var deviations = [];
@@ -21,4 +21,11 @@ exports.calculateMedianDeviation = function (occurrenceArray, expectedDistributi
 	console.log('Median Deviation: ' + medianDeviation.toFixed(2));
 
 	return medianDeviation;
+};
+
+exports.emulatePlay = function(game, playerToEmulate){
+	debugger
+	var diceRoll = game.throwDices();
+	game.movePawn(playerToEmulate, 0, diceRoll[0]);
+	game.movePawn(playerToEmulate, 0, diceRoll[1]);
 };

@@ -127,14 +127,47 @@ describe('Parcheesi Core', function() {
         });
 
         it('should pass the turn after all player moves are made on the board', function() {
-            sinon.stub(game, 'throwDices').returns([5, 4]);
-            sinon.stub(game, 'lastDiceThrow').returns([5, 4]);
+            //Here we really need to throw the dice until 5 comes up
+            var diceRoll = [];
+            while (!_und.contains(diceRoll, 5)){
+                diceRoll = game.throwDices();
+            }
 
-            var diceRoll = game.throwDices();
-            game.enterPawn(0);
-            game.movePawn(0, 0, 4);
+            var currentTurn = game.currentTurn();
+            var last = game.lastDiceThrow();
 
-            //game.currentTurn().should.not.eql()
+            var withouthFives = _und.without(diceRoll, 5);
+            var nextPawnToPlay = withouthFives.length === 0 ? 5 : withouthFives[0];
+
+            game.enterPawn(currentTurn);
+
+            game.movePawn(currentTurn, 0, nextPawnToPlay);
+            game.currentTurn().should.not.eql(currentTurn);
+        });
+
+        it('should limit the turn number according to the quantity of players', function(){
+            //setup
+            game = new parcheesi.ParcheesiGame(3);
+
+            var pawn1 = game.players[0].pawns[0];
+            pawn1.position = 5;
+            game.spaces[5].pawns.push(pawn1);
+
+            var pawn2 = game.players[1].pawns[0];
+            pawn2.position = 22;
+            game.spaces[22].pawns.push(pawn2);
+
+            var pawn3 = game.players[1].pawns[0];
+            pawn3.position = 39;
+            game.spaces[39].pawns.push(pawn3);
+
+            utils.emulatePlay(game, 0);
+            utils.emulatePlay(game, 1);
+            utils.emulatePlay(game, 2);
+
+            console.log(game.currentTurn());
+            game.currentTurn().should.not.eql(3);
+
         });
 
         it.skip('should pass the turn if there aren\'t valid moves for the current player', function() {

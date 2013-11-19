@@ -161,11 +161,23 @@ var ParcheesiGame = function(numberOfPlayers) {
                         "usedMoves":  []
                     });
 
+                var lastRoll = this.lastDiceThrow();
                 var lastEntry = _und.last(this.moveLog);
+                
                 if (lastEntry.playerIndex == playerIndex){
+                    //Register last event
                     lastEntry.usedMoves.push(diceRoll);
-                }
 
+                    //If player has used all possible moves, change the turn
+                    if (_und.difference(lastRoll, lastEntry.usedMoves).length === 0){
+                        currentTurn++;
+                        if (currentTurn === realNumberOfPlayers)
+                            currentTurn = 0;
+
+                        //TODO: Refactor (after the test passes)
+                        //currentTurn = (currentTurn === realNumberOfPlayers-1) ? 0 : currentTurn + 1;
+                    }
+                }
             },
 
             enterPawn: function(playerIndex) {
@@ -173,18 +185,18 @@ var ParcheesiGame = function(numberOfPlayers) {
                 if (player === undefined)
                     throw new Error('Player is not defined');
 
-                var reduced = _und.filter(player.pawns, function(item) {
+                var filtered = _und.filter(player.pawns, function(item) {
                     return item.position === -1;
                 });
                 
-                if (reduced.length === 0)
+                if (filtered.length === 0)
                     throw new Error('All player\'s pawns are outside of the Home');
 
                 if (!_und.contains(this.lastDiceThrow(), 5)){
                     throw new Error('Player must roll a five(5) to enter pawn');
                 }
                 
-                var pawn = _und.first(reduced);
+                var pawn = _und.first(filtered);
                 var startingSpace = this.getStartingSpace(player.color);
                 
                 startingSpace.pawns.push(pawn);
