@@ -6,12 +6,13 @@
 'use strict';
 
 var assert = require('assert'),
-    parcheesi = require('./../parcheesi'),
-    game;
+    parcheesi = require('./../parcheesi');
 
 
 describe('Parcheesi Core', function () {
     describe('Player', function(){
+
+        var game;
 
         beforeEach(function(){
             game = new parcheesi.ParcheesiGame();

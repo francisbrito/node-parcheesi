@@ -6,13 +6,15 @@
 'use strict';
 
 var assert = require('assert'),
-    parcheesi = require('./../parcheesi'),
-    game;
+    CONSTANTS = require('./../constants'),
+    ParcheesiGame = require('./../parcheesi');
 
 describe('Parcheesi Core', function() {
     describe('Board Definition', function() {
+        var game;
+
         beforeEach(function() {
-            game = new parcheesi.ParcheesiGame();
+            game = new ParcheesiGame();
         });
 
         it('should have 68 spaces on the general playfield', function() {
@@ -20,14 +22,14 @@ describe('Parcheesi Core', function() {
         });
 
         it('should have a starting point (home) for each player', function() {
-            for (var i = parcheesi.CONSTANTS.colors.length - 1; i >= 0; i--) {
+            for (var i = CONSTANTS.colors.length - 1; i >= 0; i--) {
                 assert.notEqual(game.spaces[i * 17 + 5].isStartingSpace(), false);
             }
         });
 
         it('should know all four starting spaces assigned on the board', function() {
-            for (var i = parcheesi.CONSTANTS.colors.length - 1; i >= 0; i--) {
-                assert.notEqual(game.getStartingSpace(parcheesi.CONSTANTS.colors[i].name), false);
+            for (var i = CONSTANTS.colors.length - 1; i >= 0; i--) {
+                assert.notEqual(game.getStartingSpace(CONSTANTS.colors[i].name), false);
             }
         });
 
@@ -87,7 +89,7 @@ describe('Parcheesi Core', function() {
         });
 
         it('should detect ilegal move (player doesn\'t exist)' , function () {
-            game = new parcheesi.ParcheesiGame(2);
+            game = new ParcheesiGame(2);
             var pawn = game.players[0].pawns[0];
             pawn.position = 5;
 
@@ -105,7 +107,7 @@ describe('Parcheesi Core', function() {
         });
 
         it('Should be a circular array', function() {
-            game = new parcheesi.ParcheesiGame(4);
+            game = new ParcheesiGame(4);
             var pawn = game.players[3].pawns[0];
             game.spaces[67].pawns.push(pawn);
             pawn.position = 67;

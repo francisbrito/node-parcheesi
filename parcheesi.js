@@ -3,69 +3,10 @@
 
 'use strict';
 
-var _und = require('underscore');
-
-var CONSTANTS = (function() {
-
-    var ParcheesiConstants = {
-        colors: [
-            'red',
-            'blue',
-            'yellow',
-            'green'
-            ]
-    };
-
-    return ParcheesiConstants;
-}());
-exports.CONSTANTS = CONSTANTS;
-
-var Pawn = function(color) {
-    return {
-        'color': color,
-        'position': -1
-    };
-};
-exports.Pawn = Pawn;
-
-var Player = function(color) {
-    var i,
-        player = {
-            'color': color,
-            'pawns': new Array(4)
-        };
-
-    for (i = 0; i < 4; i += 1) {
-        player.pawns[i] = new Pawn(color);
-    }
-    return player;
-};
-exports.Player = Player;
-
-var Space = function(i, createAsSafe, startPointColor) {
-    // enforces new
-    if (!(this instanceof Space)) {
-        return new Space(createAsSafe, startPointColor);
-    }
-
-    var space = {
-        pawns: [],
-
-        isSafe: function() {
-            return createAsSafe || false;
-        },
-
-        isStartingSpace: function() {
-            return startPointColor;
-        },
-
-        currentIndex: function() {
-            return i;
-        }
-    };
-
-    return space;
-};
+var _und = require('underscore'),
+    CONSTANTS = require('./constants'),
+    Player = require('./player'),
+    Space = require('./space');
 
 var ParcheesiGame = function(numberOfPlayers) {
     //Checks that object is always constructed using 'new'
@@ -73,31 +14,32 @@ var ParcheesiGame = function(numberOfPlayers) {
         return new ParcheesiGame(numberOfPlayers);
     }
 
-    var i,
-        lastDiceRoll,
+    var lastDiceRoll,
         currentTurn = -1,
         moveCounter = 0,
-        realNumberOfPlayers = numberOfPlayers || 2,
+        realNumberOfPlayers = numberOfPlayers || 2;
 
-        randomize = function(min, max) {
+        if (realNumberOfPlayers > 4) {
+            throw new Error('Wrong number of players');
+        }
+
+        var randomize = function(min, max) {
             // http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range
             return Math.floor(Math.random() * (max - min + 1) + min);
         },
 
         generateSpaces = function() {
-            var i, quarterSection,
+            var quarterSection,
                 isSpecial, startingSpace,
                 spaces = new Array(68);
 
-            for (i = 0; i < spaces.length; i += 1) {
-                //TODO:Need to take these variable declarations from outside this loop
-                //(javascript closures f**k up the assignments)
+            for (var i = 0; i < spaces.length; i += 1) {
+                
                 quarterSection = Math.floor(i / 17);
 
-                isSpecial =
-                    ((i === quarterSection * 17 + 0) ||
-                    (i === quarterSection * 17 + 5) ||
-                    (i === quarterSection * 17 + 12));
+                isSpecial = ((i === quarterSection * 17 + 0) ||
+                            (i === quarterSection * 17 + 5) ||
+                            (i === quarterSection * 17 + 12));
 
                 startingSpace = (i === quarterSection * 17 + 5) ? CONSTANTS.colors[quarterSection] : false;
 
@@ -151,33 +93,33 @@ var ParcheesiGame = function(numberOfPlayers) {
             },
 
             manageTurn: function(playerIndex, pawnIndex, nextPosition, diceRoll) {
-                if (this.moveLog.length === 0){
+                if (this.moveLog.length === 0) {
                     this.moveLog.push({
                         'playerIndex': playerIndex,
-                        'usedMoves':  []
+                        'usedMoves': []
                     });
                 }
 
                 var lastRoll = this.lastDiceThrow(),
                     lastEntry = this.moveLog[moveCounter];
-                
-                if (lastEntry === undefined){
+
+                if (lastEntry === undefined) {
                     //TODO: This should be a class instance as well, to avoid repetition
                     lastEntry = {
                         'playerIndex': playerIndex,
-                        'usedMoves':  []
+                        'usedMoves': []
                     };
                 }
-                
+
                 //Register last event
                 lastEntry.usedMoves.push(diceRoll);
 
                 //If player has used all possible moves, change the turn
-                if (_und.difference(lastRoll, lastEntry.usedMoves).length === 0){
-                    currentTurn = (currentTurn === realNumberOfPlayers-1) ? 0 : currentTurn + 1;
+                if (_und.difference(lastRoll, lastEntry.usedMoves).length === 0) {
+                    currentTurn = (currentTurn === realNumberOfPlayers - 1) ? 0 : currentTurn + 1;
                     moveCounter += 1;
                 }
-            
+
             },
 
             enterPawn: function(playerIndex) {
@@ -188,17 +130,17 @@ var ParcheesiGame = function(numberOfPlayers) {
                 var filtered = _und.filter(player.pawns, function(item) {
                     return item.position === -1;
                 });
-                
+
                 if (filtered.length === 0)
                     throw new Error('All player\'s pawns are outside of the Home');
 
-                if (!_und.contains(this.lastDiceThrow(), 5)){
+                if (!_und.contains(this.lastDiceThrow(), 5)) {
                     throw new Error('Player must roll a five(5) to enter pawn');
                 }
-                
+
                 var pawn = _und.first(filtered);
                 var startingSpace = this.getStartingSpace(player.color);
-                
+
                 startingSpace.pawns.push(pawn);
                 pawn.position = startingSpace.currentIndex();
 
@@ -247,18 +189,14 @@ var ParcheesiGame = function(numberOfPlayers) {
             }
         };
 
-        //TODO: Move to methods? this looks like it's 'hanging here'
-    if (realNumberOfPlayers > 4) {
-        throw new Error('Wrong number of players');
-    }
 
-    for (i = 0; i < realNumberOfPlayers; i += 1) {
+    for (var i = 0; i < realNumberOfPlayers; i += 1) {
         game.players.push(new Player(CONSTANTS.colors[i]));
     }
 
-    currentTurn = randomize(0, realNumberOfPlayers-1);
+    currentTurn = randomize(0, realNumberOfPlayers - 1);
 
     return game;
 };
-exports.ParcheesiGame = ParcheesiGame;
 
+module.exports = ParcheesiGame;

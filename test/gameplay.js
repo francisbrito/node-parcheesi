@@ -8,15 +8,16 @@
 var assert = require('assert'),
     _und = require('underscore'),
     sinon = require('sinon'),
-    parcheesi = require('./../parcheesi'),
     utils = require('./test_utils'),
-    game;
+    ParcheesiGame = require('./../parcheesi');
 
 
 describe('Parcheesi Core', function() {
     describe('Gameplay', function() {
+        var game;
+
         beforeEach(function() {
-            game = new parcheesi.ParcheesiGame();
+            game = new ParcheesiGame();
         });
 
         it('should define the first turn randomly', function() {
@@ -28,7 +29,7 @@ describe('Parcheesi Core', function() {
                 distributions = [0, 0, 0, 0];
 
             for (i = 0; i < 100; i += 1) {
-                game = new parcheesi.ParcheesiGame(4);
+                game = new ParcheesiGame(4);
                 distributions[game.currentTurn()] += 1;
             }
 
@@ -43,7 +44,7 @@ describe('Parcheesi Core', function() {
         it('should define the first turn randomly, but limit it to the number of players', function() {
             var i, distributions = [];
             for (i = 0; i < 100; i += 1) {
-                game = new parcheesi.ParcheesiGame(2);
+                game = new ParcheesiGame(2);
                 distributions[game.currentTurn()] += 1;
             }
 
@@ -151,7 +152,7 @@ describe('Parcheesi Core', function() {
             //setup
             var pawn1, pawn2, pawn3,
                 currentTurn,
-                game = new parcheesi.ParcheesiGame(3);
+                game = new ParcheesiGame(3);
 
             pawn1 = game.players[0].pawns[0];
             pawn1.position = 5;

@@ -6,14 +6,15 @@
 'use strict';
 
 var assert = require('assert'),
-    parcheesi = require('./../parcheesi'),
     utils = require('./test_utils'),
-    game;
+    ParcheesiGame = require('./../parcheesi');
 
 describe('Parcheesi Core', function () {
     describe('Game definition', function () {
+        var game;
+
         beforeEach(function () {
-            game = new parcheesi.ParcheesiGame();
+            game = new ParcheesiGame();
         });
 
         it('should have a board', function () {
@@ -27,7 +28,7 @@ describe('Parcheesi Core', function () {
 
         it('should not have more than 4 players', function () {
             assert.throws(function () {
-                new parcheesi.ParcheesiGame(5);
+                new ParcheesiGame(5);
             }, Error);
         });
 
