@@ -8,7 +8,7 @@ var _und = require('underscore'),
     Player = require('./player'),
     Space = require('./space');
 
-var ParcheesiGame = function(numberOfPlayers) {
+module.exports = function ParcheesiGame(numberOfPlayers) {
     //Checks that object is always constructed using 'new'
     if (!(this instanceof ParcheesiGame)) {
         return new ParcheesiGame(numberOfPlayers);
@@ -198,5 +198,3 @@ var ParcheesiGame = function(numberOfPlayers) {
 
     return game;
 };
-
-module.exports = ParcheesiGame;
