@@ -1,14 +1,15 @@
 /*jshint strict: true, curly: false, node: true */
-/*global require, console, exports*/
+/*global require, console, module*/
 
 'use strict';
 
-var _und = require('underscore'),
-    CONSTANTS = require('./constants'),
+var CONSTANTS = require('./constants'),
+    _und = require('underscore'),
     Player = require('./player'),
     Space = require('./space');
 
 module.exports = function ParcheesiGame(numberOfPlayers) {
+    
     //Checks that object is always constructed using 'new'
     if (!(this instanceof ParcheesiGame)) {
         return new ParcheesiGame(numberOfPlayers);
@@ -16,6 +17,7 @@ module.exports = function ParcheesiGame(numberOfPlayers) {
 
     var lastDiceRoll,
         currentTurn = -1,
+        remainingDiceThrows = 1,
         moveCounter = 0,
         realNumberOfPlayers = numberOfPlayers || 2;
 
@@ -29,19 +31,16 @@ module.exports = function ParcheesiGame(numberOfPlayers) {
         },
 
         generateSpaces = function() {
-            var quarterSection,
-                isSpecial, startingSpace,
-                spaces = new Array(68);
+            var spaces = new Array(68);
 
             for (var i = 0; i < spaces.length; i += 1) {
-                
-                quarterSection = Math.floor(i / 17);
+                var quarterSection = Math.floor(i / 17);
 
-                isSpecial = ((i === quarterSection * 17 + 0) ||
+                var isSpecial = ((i === quarterSection * 17 + 0) ||
                             (i === quarterSection * 17 + 5) ||
                             (i === quarterSection * 17 + 12));
 
-                startingSpace = (i === quarterSection * 17 + 5) ? CONSTANTS.colors[quarterSection] : false;
+                var startingSpace = (i === quarterSection * 17 + 5) ? CONSTANTS.colors[quarterSection] : false;
 
                 spaces[i] = new Space(i, isSpecial, startingSpace);
             }
@@ -49,15 +48,14 @@ module.exports = function ParcheesiGame(numberOfPlayers) {
         },
 
         generateStairs = function() {
-            var i, stairs = new Array(4);
+            var stairs = new Array(4);
 
-            for (i = 0; i < stairs.length; i += 1) {
+            for (var i = 0; i < stairs.length; i += 1) {
                 stairs[i] = {
                     color: CONSTANTS.colors[i],
                     spaces: new Array(8)
                 };
             }
-
             return stairs;
         },
 
@@ -75,8 +73,19 @@ module.exports = function ParcheesiGame(numberOfPlayers) {
                 return lastDiceRoll;
             },
 
-            throwDices: function() {
-                lastDiceRoll = [randomize(1, 6), randomize(1, 6)];
+            throwDices: function(playerIndex, numberOfDice) {
+                //If the dice is being rolled by a player and it has no remaining throws, throw an error
+                if (playerIndex !== undefined && remainingDiceThrows === 0)
+                    throw new Error('Player cannot throw the dice more than once per turn');
+
+                var numberToThrow = numberOfDice || 2;
+                lastDiceRoll = [];
+                
+                for (var i = 0; i < numberToThrow; i++){
+                    lastDiceRoll.push(randomize(1,6));
+                }
+                remainingDiceThrows--;
+
                 return this.lastDiceThrow();
             },
 
@@ -114,10 +123,13 @@ module.exports = function ParcheesiGame(numberOfPlayers) {
                 //Register last event
                 lastEntry.usedMoves.push(diceRoll);
 
+                var allDiceMovesUsed = _und.difference(lastRoll, lastEntry.usedMoves).length === 0;
+
                 //If player has used all possible moves, change the turn
-                if (_und.difference(lastRoll, lastEntry.usedMoves).length === 0) {
+                if (allDiceMovesUsed && remainingDiceThrows == 0) {
                     currentTurn = (currentTurn === realNumberOfPlayers - 1) ? 0 : currentTurn + 1;
                     moveCounter += 1;
+                    remainingDiceThrows = 1;
                 }
 
             },
