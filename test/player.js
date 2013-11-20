@@ -1,21 +1,29 @@
-/*jslint browser: false, nomen: true, sloppy: true*/
-/*global require, describe, it, console*/
+/*jshint strict: true, curly: false, node: true */
+/*global require, it, describe, beforeEach */
 
 //Important: these are the DOMINICAN REPUBLIC rules for playing 'parché'
 
-var assert = require('assert');
-var parcheesi = require('./../parcheesi');
+'use strict';
+
+var assert = require('assert'),
+    parcheesi = require('./../parcheesi'),
+    game;
 
 
 describe('Parcheesi Core', function () {
     describe('Player', function(){
+
+        beforeEach(function(){
+            game = new parcheesi.ParcheesiGame();
+        });
+
         it.skip('should start the game with four pawns', function () {
             assert.fail();
         });
 
         it.skip('should be able to roll the dice', function(){
             assert.fail();
-        });        
+        });
 
         it.skip('should only be able to play during its turn', function(){
             assert.fail();
@@ -45,7 +53,7 @@ describe('Parcheesi Core', function () {
             assert.fail();
         });
 
-        it.skip('should get additional spaces added to the turn after reaching heaven', function (done) {
+        it.skip('should get additional spaces added to the turn after reaching heaven', function () {
             assert.fail();
         });
     });

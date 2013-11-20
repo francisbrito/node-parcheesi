@@ -1,7 +1,9 @@
-/*jslint browser: false, nomen: true, sloppy: true, es5: true */
-/*global require, describe, it, beforeEach, console */
+/*jshint strict: true, curly: false, node: true */
+/*global require, it, describe, beforeEach */
 
 //Important: these are the DOMINICAN REPUBLIC rules for playing 'parché'
+
+'use strict';
 
 var assert = require('assert'),
     _und = require('underscore'),

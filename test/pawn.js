@@ -1,14 +1,21 @@
-/*jslint browser: false, nomen: true, sloppy: true*/
-/*global require, describe, it, console*/
+/*jshint strict: true, curly: false, node: true */
+/*global require, it, describe, beforeEach */
 
 //Important: these are the DOMINICAN REPUBLIC rules for playing 'parché'
 
-var assert = require('assert');
-var parcheesi = require('./../parcheesi');
+'use strict';
 
+var assert = require('assert'),
+    parcheesi = require('./../parcheesi'),
+    game;
 
 describe('Parcheesi Core', function() {
     describe('Pawn', function() {
+
+        beforeEach(function(){
+            game = new parcheesi.ParcheesiGame();
+        });
+
         it.skip('cannot move more spaces than the ones on the dice throw', function() {
             assert.fail();
         });

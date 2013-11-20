@@ -1,3 +1,7 @@
+/*jshint strict: true, curly: false, node: true */
+
+'use strict';
+
 exports.calculateMedianDeviation = function(occurrenceArray, expectedDistribution) {
 	//This is a complicated test and I still don't get it that well :P
 	//http://programmers.stackexchange.com/questions/147134/how-should-i-test-randomness

@@ -1,10 +1,11 @@
-/*jslint browser: false, nomen: true, white: true, es5: true */
+/*jshint strict: true, curly: false, node: true */
 /*global require, console, exports*/
+
+'use strict';
 
 var _und = require('underscore');
 
 var CONSTANTS = (function() {
-    'use strict';
 
     var ParcheesiConstants = {
         colors: [
@@ -20,7 +21,6 @@ var CONSTANTS = (function() {
 exports.CONSTANTS = CONSTANTS;
 
 var Pawn = function(color) {
-    'use strict';
     return {
         'color': color,
         'position': -1
@@ -29,8 +29,6 @@ var Pawn = function(color) {
 exports.Pawn = Pawn;
 
 var Player = function(color) {
-    'use strict';
-
     var i,
         player = {
             'color': color,
@@ -45,8 +43,6 @@ var Player = function(color) {
 exports.Player = Player;
 
 var Space = function(i, createAsSafe, startPointColor) {
-    'use strict';
-
     // enforces new
     if (!(this instanceof Space)) {
         return new Space(createAsSafe, startPointColor);
@@ -72,8 +68,6 @@ var Space = function(i, createAsSafe, startPointColor) {
 };
 
 var ParcheesiGame = function(numberOfPlayers) {
-    'use strict';
-
     //Checks that object is always constructed using 'new'
     if (!(this instanceof ParcheesiGame)) {
         return new ParcheesiGame(numberOfPlayers);
@@ -91,7 +85,7 @@ var ParcheesiGame = function(numberOfPlayers) {
         },
 
         generateSpaces = function() {
-            var i, quarterSection, 
+            var i, quarterSection,
                 isSpecial, startingSpace,
                 spaces = new Array(68);
 
@@ -159,8 +153,8 @@ var ParcheesiGame = function(numberOfPlayers) {
             manageTurn: function(playerIndex, pawnIndex, nextPosition, diceRoll) {
                 if (this.moveLog.length === 0){
                     this.moveLog.push({
-                        "playerIndex": playerIndex,
-                        "usedMoves":  []
+                        'playerIndex': playerIndex,
+                        'usedMoves':  []
                     });
                 }
 
@@ -170,8 +164,8 @@ var ParcheesiGame = function(numberOfPlayers) {
                 if (lastEntry === undefined){
                     //TODO: This should be a class instance as well, to avoid repetition
                     lastEntry = {
-                        "playerIndex": playerIndex,
-                        "usedMoves":  []
+                        'playerIndex': playerIndex,
+                        'usedMoves':  []
                     };
                 }
                 
