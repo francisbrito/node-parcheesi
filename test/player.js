@@ -6,6 +6,7 @@
 'use strict';
 
 var assert = require('assert'),
+    testUtils = require('./test_utils.js'),
     ParcheesiGame = require('./../parcheesi');
 
 
@@ -41,15 +42,32 @@ describe('Parcheesi Core', function() {
 
         });
 
-        it.skip('should only be able to play during its turn', function() {
+        it('should be able to move a Pawn', function() {
+            var currentTurn = game.currentTurn();
+            var pawn = testUtils.positionPawnOnStart(game, currentTurn);
+
+            var initialPosition = pawn.position;
+            game.movePawn(currentTurn, 0, 5);
+
+            pawn.position.should.not.eql(initialPosition);
+        });
+
+        it('should only be able to play during its turn (movePawn)', function() {
+            var currentTurn = game.currentTurn();
+            var otherTurn = (currentTurn == 1) ? 0 : 1;
+            var pawn = testUtils.positionPawnOnStart(game, otherTurn);
+
+            var initialPosition = pawn.position;
+            game.movePawn(otherTurn, 0, 5);
+
+            assert.fail();
+        });
+
+        it('should only be able to play during its turn (enterPawn)', function() {
             assert.fail();
         });
 
         it.skip('should be able to decided which Pawns to move', function() {
-            assert.fail();
-        });
-
-        it.skip('should be able to move a Pawn', function() {
             assert.fail();
         });
 

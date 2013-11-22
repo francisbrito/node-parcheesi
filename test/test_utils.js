@@ -32,3 +32,18 @@ exports.emulatePlay = function(game, playerToEmulate){
 	game.movePawn(playerToEmulate, 0, diceRoll[0]);
 	game.movePawn(playerToEmulate, 0, diceRoll[1]);
 };
+
+var positionPawn = function(game, playerIndex, pawnIndex, position){
+	var pawn = game.players[playerIndex].pawns[pawnIndex];
+    pawn.position = position;
+    game.spaces[position].pawns.push(pawn);
+    return pawn;
+};
+exports.positionPawn = positionPawn;
+
+var positionPawnOnStart = function(game, playerIndex) {
+	var positionPoint = (playerIndex * 17) + 5;
+	return positionPawn(game, playerIndex, 0, positionPoint);
+};
+exports.positionPawnOnStart = positionPawnOnStart;
+

@@ -8,7 +8,7 @@
 var assert = require('assert'),
     _und = require('underscore'),
     sinon = require('sinon'),
-    utils = require('./test_utils'),
+    testUtils = require('./test_utils'),
     ParcheesiGame = require('./../parcheesi');
 
 
@@ -36,7 +36,7 @@ describe('Parcheesi Core', function() {
             console.log(distributions);
 
             //Calculate the median deviation of each observed roll aggregate:
-            medianDeviaton = utils.calculateMedianDeviation(distributions, expectedDistribution);
+            medianDeviaton = testUtils.calculateMedianDeviation(distributions, expectedDistribution);
 
             medianDeviaton.should.be.within(0, 0.25);
         });
@@ -143,42 +143,33 @@ describe('Parcheesi Core', function() {
             nextPawnToPlay = withouthFives.length === 0 ? 5 : withouthFives[0];
 
             game.enterPawn(currentTurn);
+            
+            debugger
             game.movePawn(currentTurn, 0, nextPawnToPlay);
 
+            
             game.currentTurn().should.not.eql(currentTurn);
         });
 
         it('should limit the turn number according to the quantity of players', function() {
             //setup
-            var pawn1, pawn2, pawn3,
-                currentTurn,
-                game = new ParcheesiGame(3);
+            var currentTurn,
+                game = new ParcheesiGame(3),
 
-            pawn1 = game.players[0].pawns[0];
-            pawn1.position = 5;
-            game.spaces[5].pawns.push(pawn1);
-
-            pawn2 = game.players[1].pawns[0];
-            pawn2.position = 22;
-            game.spaces[22].pawns.push(pawn2);
-
-            pawn3 = game.players[2].pawns[0];
-            pawn3.position = 39;
-            game.spaces[39].pawns.push(pawn3);
+                pawn1 = testUtils.positionPawn(game, 0, 0, 5),
+                pawn2 = testUtils.positionPawn(game, 1, 0, 22),
+                pawn3 = testUtils.positionPawn(game, 2, 0, 39);
 
             currentTurn = game.currentTurn();
-            utils.emulatePlay(game, currentTurn);
+            testUtils.emulatePlay(game, currentTurn);
 
-            currentTurn = currentTurn + 1 === 3 ? 0 : currentTurn;
-            utils.emulatePlay(game, currentTurn);
+            currentTurn = currentTurn + 1 !== 3 ? currentTurn + 1 : 0;
+            testUtils.emulatePlay(game, currentTurn);
 
-            currentTurn = currentTurn + 1 === 3 ? 0 : currentTurn;
-            utils.emulatePlay(game, 2);
+            currentTurn = currentTurn + 1 !== 3 ? currentTurn + 1: 0;
+            testUtils.emulatePlay(game, currentTurn);
 
-            console.log(game.currentTurn());
             game.currentTurn().should.not.eql(3);
-            //game.currentTurn().should.not.eql(3);
-
         });
 
         it.skip('should pass the turn if there aren\'t valid moves for the current player', function() {
