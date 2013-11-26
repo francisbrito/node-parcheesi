@@ -3,13 +3,13 @@
 
 var utils = require('./utils');
 
-module.exports = function() {
+module.exports = function(dicePreference) {
 	'use strict';
 
 	this.value = -1;
 
 	this.roll = function(){
-		this.value = utils.randomize(1,6);
+		this.value = dicePreference || utils.randomize(1,6);
 		return this.value;
 	};
 };

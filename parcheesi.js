@@ -6,21 +6,25 @@
 var CONSTANTS = require('./constants'),
     _und = require('underscore'),
     utils = require('./utils'),
+    dice = require('./dice'),
     Player = require('./player'),
     Space = require('./space');
 
-module.exports = function ParcheesiGame(numberOfPlayers) {
+module.exports = function ParcheesiGame(options) {
 
     //Checks that object is always constructed using 'new'
     if (!(this instanceof ParcheesiGame)) {
-        return new ParcheesiGame(numberOfPlayers);
+        return new ParcheesiGame(options);
     }
 
-    var lastDiceRoll,
+    options = options || {};
+
+    var dices = _und.extend([new dice(), new dice()], options.dices),
+        lastDiceRoll,
         currentTurn = -1,
         remainingDiceThrows = 1,
         moveCounter = 0,
-        realNumberOfPlayers = numberOfPlayers || 2;
+        realNumberOfPlayers = options.numberOfPlayers || 2;
 
     if (realNumberOfPlayers > 4) {
         throw new Error('Wrong number of players');
@@ -78,9 +82,12 @@ module.exports = function ParcheesiGame(numberOfPlayers) {
             lastDiceRoll = [];
 
             for (var i = 0; i < numberToThrow; i++) {
-                lastDiceRoll.push(utils.randomize(1, 6));
+                lastDiceRoll.push(dices[i].roll());
             }
-            remainingDiceThrows--;
+
+            //Only if the dice throw is associated with a player the remaining Dice Throw is decreased
+            if (playerIndex !== undefined)
+                remainingDiceThrows--;
 
             return this.lastDiceThrow();
         },
@@ -99,6 +106,7 @@ module.exports = function ParcheesiGame(numberOfPlayers) {
         },
 
         manageTurn: function (playerIndex, pawnIndex, nextPosition, diceRoll) {
+            
             if (this.moveLog.length === 0) {
                 this.moveLog.push({
                     'playerIndex': playerIndex,

@@ -28,7 +28,7 @@ describe('Parcheesi Core', function () {
 
         it('should not have more than 4 players', function () {
             assert.throws(function () {
-                new ParcheesiGame(5);
+                game = new ParcheesiGame({numberOfPlayers: 5});
             }, Error);
         });
 

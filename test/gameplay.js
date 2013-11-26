@@ -9,6 +9,7 @@ var assert = require('assert'),
     _und = require('underscore'),
     sinon = require('sinon'),
     testUtils = require('./test_utils'),
+    dice = require('./../dice'),
     ParcheesiGame = require('./../parcheesi');
 
 
@@ -29,7 +30,7 @@ describe('Parcheesi Core', function() {
                 distributions = [0, 0, 0, 0];
 
             for (i = 0; i < 100; i += 1) {
-                game = new ParcheesiGame(4);
+                game = new ParcheesiGame({numberOfPlayers: 4});
                 distributions[game.currentTurn()] += 1;
             }
 
@@ -44,7 +45,7 @@ describe('Parcheesi Core', function() {
         it('should define the first turn randomly, but limit it to the number of players', function() {
             var i, distributions = [];
             for (i = 0; i < 100; i += 1) {
-                game = new ParcheesiGame(2);
+                game = new ParcheesiGame({numberOfPlayers: 2});
                 distributions[game.currentTurn()] += 1;
             }
 
@@ -129,24 +130,19 @@ describe('Parcheesi Core', function() {
 
         it('should pass the turn after all player moves are made on the board', function() {
             //Here we really need to throw the dice until 5 comes up
-            var diceRoll,
-                currentTurn,
-                withouthFives,
-                nextPawnToPlay;
+            var game = new ParcheesiGame({
+                dices:[new dice(5)]
+            }),
 
-            while (!_und.contains(diceRoll, 5)) {
-                diceRoll = game.throwDices();
-            }
-
-            currentTurn = game.currentTurn();
-            withouthFives = _und.without(diceRoll, 5);
+            diceRoll = game.throwDices(),
+            currentTurn = game.currentTurn(),
+            withouthFives = _und.without(diceRoll, 5),
             nextPawnToPlay = withouthFives.length === 0 ? 5 : withouthFives[0];
 
             game.enterPawn(currentTurn);
             
             debugger
             game.movePawn(currentTurn, 0, nextPawnToPlay);
-
             
             game.currentTurn().should.not.eql(currentTurn);
         });
@@ -154,7 +150,7 @@ describe('Parcheesi Core', function() {
         it('should limit the turn number according to the quantity of players', function() {
             //setup
             var currentTurn,
-                game = new ParcheesiGame(3),
+                game = new ParcheesiGame({numberOfPlayers: 3}),
 
                 pawn1 = testUtils.positionPawn(game, 0, 0, 5),
                 pawn2 = testUtils.positionPawn(game, 1, 0, 22),

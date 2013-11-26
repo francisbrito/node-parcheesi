@@ -89,7 +89,7 @@ describe('Parcheesi Core', function() {
         });
 
         it('should detect ilegal move (player doesn\'t exist)' , function () {
-            game = new ParcheesiGame(2);
+            game = new ParcheesiGame({numberOfPlayers: 2});
             var pawn = game.players[0].pawns[0];
             pawn.position = 5;
 
@@ -107,7 +107,7 @@ describe('Parcheesi Core', function() {
         });
 
         it('Should be a circular array', function() {
-            game = new ParcheesiGame(4);
+            game = new ParcheesiGame({numberOfPlayers: 4});
             var pawn = game.players[3].pawns[0];
             game.spaces[67].pawns.push(pawn);
             pawn.position = 67;
