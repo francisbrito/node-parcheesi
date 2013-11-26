@@ -30,7 +30,9 @@ describe('Parcheesi Core', function() {
                 distributions = [0, 0, 0, 0];
 
             for (i = 0; i < 100; i += 1) {
-                game = new ParcheesiGame({numberOfPlayers: 4});
+                game = new ParcheesiGame({
+                    numberOfPlayers: 4
+                });
                 distributions[game.currentTurn()] += 1;
             }
 
@@ -45,7 +47,9 @@ describe('Parcheesi Core', function() {
         it('should define the first turn randomly, but limit it to the number of players', function() {
             var i, distributions = [];
             for (i = 0; i < 100; i += 1) {
-                game = new ParcheesiGame({numberOfPlayers: 2});
+                game = new ParcheesiGame({
+                    numberOfPlayers: 2
+                });
                 distributions[game.currentTurn()] += 1;
             }
 
@@ -69,7 +73,8 @@ describe('Parcheesi Core', function() {
 
             (function() {
                 game.enterPawn(0);
-            }).should.throw('All player\'s pawns are outside of the Home');
+            }).should.
+            throw ('All player\'s pawns are outside of the Home');
         });
 
         it('should allow players to take out a Pawn when a five(5/x) is rolled', function() {
@@ -92,7 +97,8 @@ describe('Parcheesi Core', function() {
 
             (function() {
                 game.enterPawn(0);
-            }).should.throw('Player must roll a five(5) to enter pawn');
+            }).should.
+            throw ('Player must roll a five(5) to enter pawn');
         });
 
         it('should allow the player to take out two Pawns when a double five (5/5) is rolled', function() {
@@ -129,40 +135,37 @@ describe('Parcheesi Core', function() {
         });
 
         it('should pass the turn after all player moves are made on the board', function() {
-            //Here we really need to throw the dice until 5 comes up
             var game = new ParcheesiGame({
-                dices:[new dice(5)]
+                dices: [new dice(5)]
             }),
 
-            diceRoll = game.throwDices(),
-            currentTurn = game.currentTurn(),
-            withouthFives = _und.without(diceRoll, 5),
-            nextPawnToPlay = withouthFives.length === 0 ? 5 : withouthFives[0];
+                currentTurn = game.currentTurn(),
+                diceRoll = game.throwDices(currentTurn),
+                withouthFives = _und.without(diceRoll, 5),
+                spacesToMove = withouthFives.length === 0 ? 5 : withouthFives[0];
 
             game.enterPawn(currentTurn);
-            
-            debugger
-            game.movePawn(currentTurn, 0, nextPawnToPlay);
-            
+            game.movePawn(currentTurn, 0, spacesToMove);
+
             game.currentTurn().should.not.eql(currentTurn);
         });
 
         it('should limit the turn number according to the quantity of players', function() {
-            //setup
-            var currentTurn,
-                game = new ParcheesiGame({numberOfPlayers: 3}),
+            var game = new ParcheesiGame({
+                numberOfPlayers: 3
+            });
 
-                pawn1 = testUtils.positionPawn(game, 0, 0, 5),
-                pawn2 = testUtils.positionPawn(game, 1, 0, 22),
-                pawn3 = testUtils.positionPawn(game, 2, 0, 39);
+            testUtils.positionPawn(game, 0, 0, 5);
+            testUtils.positionPawn(game, 1, 0, 22);
+            testUtils.positionPawn(game, 2, 0, 39);
 
-            currentTurn = game.currentTurn();
+            var currentTurn = game.currentTurn();
             testUtils.emulatePlay(game, currentTurn);
 
             currentTurn = currentTurn + 1 !== 3 ? currentTurn + 1 : 0;
             testUtils.emulatePlay(game, currentTurn);
 
-            currentTurn = currentTurn + 1 !== 3 ? currentTurn + 1: 0;
+            currentTurn = currentTurn + 1 !== 3 ? currentTurn + 1 : 0;
             testUtils.emulatePlay(game, currentTurn);
 
             game.currentTurn().should.not.eql(3);
