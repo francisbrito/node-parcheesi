@@ -63,13 +63,16 @@ describe('Parcheesi Core', function() {
         });
 
         it('should allow a player to move a pawn', function() {
+            game = new ParcheesiGame({
+                startingTurn: 0,
+                dices: [new dice(6), new dice(4)]
+            });
             testUtils.positionPawnOnStart(game, 0);
 
             //Perform a move on the first player, with the first pawn, four spaces
             game.throwDices(0);
-            game.movePawn(0, 0, game.lastDiceThrow()[0]);
-
-            game.players[0].pawns[0].position.should.equal(5 + game.lastDiceThrow()[0]);
+            game.movePawn(0, 0, 4);
+            game.players[0].pawns[0].position.should.equal(5 + 4);
         });
 
         it('should detect ilegal move (pawn isn\'t outside of the home)', function() {
@@ -93,6 +96,7 @@ describe('Parcheesi Core', function() {
             game = new ParcheesiGame({
                 numberOfPlayers: 2
             });
+
             var pawn = game.players[0].pawns[0];
             pawn.position = 5;
 

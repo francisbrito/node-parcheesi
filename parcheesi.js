@@ -31,7 +31,16 @@ module.exports = function ParcheesiGame(options) {
         throw new Error('Wrong number of players');
     }
 
-    var generateSpaces = function () {
+    var generatePlayers = function(){
+        var players = [];
+        for (var i = 0; i < realNumberOfPlayers; i += 1) {
+            players.push(new Player(CONSTANTS.colors[i], i));
+        }
+
+        return players;
+    },
+
+    generateSpaces = function () {
         var spaces = new Array(68);
 
         for (var i = 0; i < spaces.length; i += 1) {
@@ -60,10 +69,19 @@ module.exports = function ParcheesiGame(options) {
         return stairs;
     },
 
+    //Checks that a player is able to play
+    validateIsAbleToPlay = function(player, currentTurn){
+        if (player === undefined)
+            throw new Error('Player is not defined');
+        
+        if (player.index !== currentTurn)
+            throw new Error('It\'s not the current player\'s turn');
+    },
+
     game = {
         spaces: generateSpaces(),
         stairs: generateStairs(),
-        players: [],
+        players: generatePlayers(),
         moveLog: [],
 
         currentTurn: function () {
@@ -107,9 +125,6 @@ module.exports = function ParcheesiGame(options) {
         },
 
         manageTurn: function (playerIndex, pawnIndex, nextPosition, diceRoll) {
-
-            //THis implementaiton is very wrong
-
             if (this.moveLog.length === playerIndex) {
                 this.moveLog.push({
                     'playerIndex': playerIndex,
@@ -141,13 +156,11 @@ module.exports = function ParcheesiGame(options) {
                 moveCounter += 1;
                 remainingDiceThrows = 1;
             }
-
         },
 
         enterPawn: function (playerIndex) {
             var player = this.players[playerIndex];
-            if (player === undefined)
-                throw new Error('Player is not defined');
+            validateIsAbleToPlay(player, currentTurn);
 
             var filtered = _und.filter(player.pawns, function (item) {
                 return item.position === -1;
@@ -167,22 +180,17 @@ module.exports = function ParcheesiGame(options) {
             pawn.position = startingSpace.currentIndex();
 
             //TODO: need to find a way to pass the index of the pawn here
-            this.manageTurn(playerIndex, undefined, startingSpace.currentIndex(), 5);
+            this.manageTurn(playerIndex, pawn.index, startingSpace.currentIndex(), 5);
         },
 
         movePawn: function(playerIndex, pawnIndex, movesToMake) {
             var player = this.players[playerIndex];
-            if (player === undefined)
-                throw new Error('Player is not defined');
+            validateIsAbleToPlay(player, currentTurn);
 
+            //TODO: Move this over to validateIsAbleToPlay as well
             var pawn = player.pawns[pawnIndex];
             if (pawn === undefined)
                 throw new Error('Pawn is not defined');
-
-            if (playerIndex !== currentTurn)
-                throw new Error('It\'s not the current player\'s turn');
-
-            //TODO:rules of movement will eventually go here?
 
             var currentPosition = pawn.position || -1;
             if (currentPosition === -1)
@@ -202,9 +210,9 @@ module.exports = function ParcheesiGame(options) {
                 currentSpace.pawns = _und.without(currentSpace.pawns, pawn);
                 nextSpace.pawns.push(pawn);
                 pawn.position = nextPosition;
+
                 //TODO: maybe the pawn could have an event emitter, and each time we 
                 //change the position then it would simply move to the right position
-
                 this.manageTurn(playerIndex, pawnIndex, nextPosition, movesToMake);
                 
             } else {
@@ -212,11 +220,6 @@ module.exports = function ParcheesiGame(options) {
             }
         }
     };
-
-
-    for (var i = 0; i < realNumberOfPlayers; i += 1) {
-        game.players.push(new Player(CONSTANTS.colors[i]));
-    }
 
     return game;
 };

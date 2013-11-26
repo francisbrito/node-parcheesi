@@ -4,7 +4,7 @@
 'use strict';
 
 module.exports = function Space(i, createAsSafe, startPointColor) {
-    //TODO: use Resig's model for class creation 
+    //TODO: Convert this to a real module and define the methods using prototype object
     //(makeClass method instead of calling this same sentence on each class declaration)
 
     // enforces new

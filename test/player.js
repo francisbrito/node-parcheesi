@@ -7,6 +7,7 @@
 
 var assert = require('assert'),
     testUtils = require('./test_utils.js'),
+    dice = require('./../dice'),
     ParcheesiGame = require('./../parcheesi');
 
 
@@ -64,8 +65,17 @@ describe('Parcheesi Core', function() {
             
         });
 
-        it.skip('should only be able to play during its turn (enterPawn)', function() {
-            assert.fail();
+        it('should only be able to play during its turn (enterPawn)', function() {
+            game = new ParcheesiGame({
+                startingTurn : 0,
+                dices: [new dice(5), new dice(5)]
+            });
+            
+            (function(){
+                debugger
+                game.throwDices();
+                game.enterPawn(1);
+            }).should.throw();
         });
 
         it.skip('should be able to decided which Pawns to move', function() {
