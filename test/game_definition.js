@@ -14,7 +14,9 @@ describe('Parcheesi Core', function () {
         var game;
 
         beforeEach(function () {
-            game = new ParcheesiGame();
+            game = new ParcheesiGame({
+                startingTurn: 0
+            });
         });
 
         it('should have a board', function () {
@@ -28,7 +30,9 @@ describe('Parcheesi Core', function () {
 
         it('should not have more than 4 players', function () {
             assert.throws(function () {
-                game = new ParcheesiGame({numberOfPlayers: 5});
+                game = new ParcheesiGame({
+                    numberOfPlayers: 5
+                });
             }, Error);
         });
 

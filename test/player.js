@@ -25,45 +25,46 @@ describe('Parcheesi Core', function() {
         });
 
         it('should be able to roll the dice', function() {
-            var player = game.players[0];
             var roll = game.throwDices();
-
             roll.should.not.eql(undefined);
         });
 
         it('should not be able to throw the dices more than once per turn', function() {
-            var currentTurn = game.currentTurn();
-
-            game.throwDices(currentTurn);
+            game.throwDices(0);
 
             (function() {
-                game.throwDices(currentTurn);
+                game.throwDices(0);
             }).should.throw();
-
         });
 
         it('should be able to move a Pawn', function() {
-            var currentTurn = game.currentTurn();
-            var pawn = testUtils.positionPawnOnStart(game, currentTurn);
+            var currentTurn = game.currentTurn(),
+                pawn = testUtils.positionPawnOnStart(game, currentTurn),
+                initialPosition = pawn.position;
+                
+            game.throwDices();
+            var lastRoll = game.lastDiceThrow();
 
-            var initialPosition = pawn.position;
-            game.movePawn(currentTurn, 0, 5);
-
+            game.movePawn(currentTurn, 0, lastRoll[0]);
             pawn.position.should.not.eql(initialPosition);
         });
 
         it('should only be able to play during its turn (movePawn)', function() {
-            var currentTurn = game.currentTurn();
-            var otherTurn = (currentTurn == 1) ? 0 : 1;
-            var pawn = testUtils.positionPawnOnStart(game, otherTurn);
+            game = new ParcheesiGame({
+                startingTurn : 0
+            });
 
-            var initialPosition = pawn.position;
-            game.movePawn(otherTurn, 0, 5);
-
-            assert.fail();
+            //TODO: Instead of using position.PawnOnStart it should be passed to the game object on options
+            testUtils.positionPawnOnStart(game, 0);
+            testUtils.positionPawnOnStart(game, 1);
+            
+            (function(){
+                game.movePawn(1, 0, 5);
+            }).should.throw();
+            
         });
 
-        it('should only be able to play during its turn (enterPawn)', function() {
+        it.skip('should only be able to play during its turn (enterPawn)', function() {
             assert.fail();
         });
 

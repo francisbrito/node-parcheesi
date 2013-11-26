@@ -18,7 +18,9 @@ describe('Parcheesi Core', function() {
         var game;
 
         beforeEach(function() {
-            game = new ParcheesiGame();
+            game = new ParcheesiGame({
+                startingTurn: 0
+            });
         });
 
         it('should define the first turn randomly', function() {
@@ -57,9 +59,16 @@ describe('Parcheesi Core', function() {
         });
 
         it('should convert the value of six(6) to twelve(12)', function() {
+            game = new ParcheesiGame({
+                startingTurn: 0,
+                dices: [new dice(6), new dice(6)]
+            });
+
             var pawn = game.players[0].pawns[0];
             game.spaces[10].pawns.push(pawn);
             pawn.position = 10;
+            
+            game.throwDices();
             game.movePawn(0, 0, 6);
 
             pawn.position.should.equal(10 + 12);
@@ -134,8 +143,24 @@ describe('Parcheesi Core', function() {
             _und.last(game.moveLog).usedMoves.should.eql([5, 4]);
         });
 
+        it('should keep track of multiple moves performed (move pawn multiple times)', function () {
+             game = new ParcheesiGame({
+                numberOfPlayers: 2,
+                startingTurn: 0
+            });
+
+            testUtils.positionPawnOnStart(game, 0);
+            testUtils.positionPawnOnStart(game, 1);
+
+            testUtils.emulatePlay(game, 0);
+            testUtils.emulatePlay(game, 1);
+
+            game.moveLog.should.have.lengthOf(2);
+        });
+
         it('should pass the turn after all player moves are made on the board', function() {
             var game = new ParcheesiGame({
+                startingTurn: 0,
                 dices: [new dice(5)]
             }),
 
@@ -151,22 +176,18 @@ describe('Parcheesi Core', function() {
         });
 
         it('should limit the turn number according to the quantity of players', function() {
-            var game = new ParcheesiGame({
+            game = new ParcheesiGame({
+                startingTurn: 0,
                 numberOfPlayers: 3
             });
 
-            testUtils.positionPawn(game, 0, 0, 5);
-            testUtils.positionPawn(game, 1, 0, 22);
-            testUtils.positionPawn(game, 2, 0, 39);
+            testUtils.positionPawnOnStart(game, 0);
+            testUtils.positionPawnOnStart(game, 1);
+            testUtils.positionPawnOnStart(game, 2);
 
-            var currentTurn = game.currentTurn();
-            testUtils.emulatePlay(game, currentTurn);
-
-            currentTurn = currentTurn + 1 !== 3 ? currentTurn + 1 : 0;
-            testUtils.emulatePlay(game, currentTurn);
-
-            currentTurn = currentTurn + 1 !== 3 ? currentTurn + 1 : 0;
-            testUtils.emulatePlay(game, currentTurn);
+            testUtils.emulatePlay(game, 0);
+            testUtils.emulatePlay(game, 1);
+            testUtils.emulatePlay(game, 2);
 
             game.currentTurn().should.not.eql(3);
         });

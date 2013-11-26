@@ -27,11 +27,12 @@ exports.calculateMedianDeviation = function(occurrenceArray, expectedDistributio
 	return medianDeviation;
 };
 
-exports.emulatePlay = function(game, playerToEmulate){
-	var diceRoll = game.throwDices();
-	game.movePawn(playerToEmulate, 0, diceRoll[0]);
-	game.movePawn(playerToEmulate, 0, diceRoll[1]);
+var emulatePlay = function(game, playerIndex){
+	var diceRoll = game.throwDices(playerIndex);
+	game.movePawn(playerIndex, 0, diceRoll[0]);
+	game.movePawn(playerIndex, 0, diceRoll[1]);
 };
+exports.emulatePlay = emulatePlay;
 
 var positionPawn = function(game, playerIndex, pawnIndex, position){
 	var pawn = game.players[playerIndex].pawns[pawnIndex];

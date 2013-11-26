@@ -6,7 +6,9 @@
 'use strict';
 
 var assert = require('assert'),
+    testUtils = require('./test_utils'),
     CONSTANTS = require('./../constants'),
+    dice = require('./../dice'),
     ParcheesiGame = require('./../parcheesi');
 
 describe('Parcheesi Core', function() {
@@ -14,7 +16,9 @@ describe('Parcheesi Core', function() {
         var game;
 
         beforeEach(function() {
-            game = new ParcheesiGame();
+            game = new ParcheesiGame({
+                startingTurn: 0
+            });
         });
 
         it('should have 68 spaces on the general playfield', function() {
@@ -46,9 +50,9 @@ describe('Parcheesi Core', function() {
             }
         });
 
-        // it('should have a heaven (last spot a player can play to)', function() {
-        //     assert.fail();
-        // });
+        it.skip('should have a heaven (last spot a player can play to)', function() {
+            assert.fail();
+        });
 
         it('should have safe places distribuited across the general playfield', function() {
             for (var i = 0; i < 4; i += 1) {
@@ -59,16 +63,13 @@ describe('Parcheesi Core', function() {
         });
 
         it('should allow a player to move a pawn', function() {
-            //mocking the places
-            
-            var pawn = game.players[0].pawns[0];
-            pawn.position = 5;
-            game.spaces[5].pawns.push(pawn);
+            testUtils.positionPawnOnStart(game, 0);
 
             //Perform a move on the first player, with the first pawn, four spaces
-            game.movePawn(0, 0, 4);
+            game.throwDices(0);
+            game.movePawn(0, 0, game.lastDiceThrow()[0]);
 
-            game.players[0].pawns[0].position.should.equal(5 + 4);
+            game.players[0].pawns[0].position.should.equal(5 + game.lastDiceThrow()[0]);
         });
 
         it('should detect ilegal move (pawn isn\'t outside of the home)', function() {
@@ -89,7 +90,9 @@ describe('Parcheesi Core', function() {
         });
 
         it('should detect ilegal move (player doesn\'t exist)' , function () {
-            game = new ParcheesiGame({numberOfPlayers: 2});
+            game = new ParcheesiGame({
+                numberOfPlayers: 2
+            });
             var pawn = game.players[0].pawns[0];
             pawn.position = 5;
 
@@ -107,11 +110,17 @@ describe('Parcheesi Core', function() {
         });
 
         it('Should be a circular array', function() {
-            game = new ParcheesiGame({numberOfPlayers: 4});
+            game = new ParcheesiGame({
+                startingTurn: 3,
+                numberOfPlayers: 4,
+                dices: [new dice(5), new dice(5)]
+            });
+
             var pawn = game.players[3].pawns[0];
             game.spaces[67].pawns.push(pawn);
             pawn.position = 67;
 
+            game.throwDices();
             game.movePawn(3,0,5);
 
             pawn.position.should.equal(4);

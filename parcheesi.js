@@ -19,12 +19,13 @@ module.exports = function ParcheesiGame(options) {
 
     options = options || {};
 
-    var dices = _und.extend([new dice(), new dice()], options.dices),
-        lastDiceRoll,
-        currentTurn = -1,
+    var lastDiceRoll,
+        dices = _und.extend([new dice(), new dice()], options.dices),
         remainingDiceThrows = 1,
         moveCounter = 0,
-        realNumberOfPlayers = options.numberOfPlayers || 2;
+        realNumberOfPlayers = options.numberOfPlayers || 2,
+        //TODO: THIS IS TOO LONG, FIND A SHORTHAND
+        currentTurn = (options.startingTurn !== undefined) ? options.startingTurn : utils.randomize(0, realNumberOfPlayers - 1);
 
     if (realNumberOfPlayers > 4) {
         throw new Error('Wrong number of players');
@@ -106,8 +107,10 @@ module.exports = function ParcheesiGame(options) {
         },
 
         manageTurn: function (playerIndex, pawnIndex, nextPosition, diceRoll) {
-            
-            if (this.moveLog.length === 0) {
+
+            //THis implementaiton is very wrong
+
+            if (this.moveLog.length === playerIndex) {
                 this.moveLog.push({
                     'playerIndex': playerIndex,
                     'usedMoves': []
@@ -128,7 +131,9 @@ module.exports = function ParcheesiGame(options) {
             //Register last event
             lastEntry.usedMoves.push(diceRoll);
 
-            var allDiceMovesUsed = _und.difference(lastRoll, lastEntry.usedMoves).length === 0;
+
+            // var allDiceMovesUsed = _und.difference(lastRoll, lastEntry.usedMoves).length === 0;
+            var allDiceMovesUsed = lastRoll.length === lastEntry.usedMoves.length;
 
             //If player has used all possible moves, change the turn
             if (allDiceMovesUsed && remainingDiceThrows === 0) {
@@ -165,7 +170,7 @@ module.exports = function ParcheesiGame(options) {
             this.manageTurn(playerIndex, undefined, startingSpace.currentIndex(), 5);
         },
 
-    movePawn: function(playerIndex, pawnIndex, movesToMake) {
+        movePawn: function(playerIndex, pawnIndex, movesToMake) {
             var player = this.players[playerIndex];
             if (player === undefined)
                 throw new Error('Player is not defined');
@@ -173,6 +178,9 @@ module.exports = function ParcheesiGame(options) {
             var pawn = player.pawns[pawnIndex];
             if (pawn === undefined)
                 throw new Error('Pawn is not defined');
+
+            if (playerIndex !== currentTurn)
+                throw new Error('It\'s not the current player\'s turn');
 
             //TODO:rules of movement will eventually go here?
 
@@ -202,7 +210,6 @@ module.exports = function ParcheesiGame(options) {
             } else {
                 throw new Error('Unexpected error. The pawn wasn\'t on the allocated space');
             }
-
         }
     };
 
@@ -210,8 +217,6 @@ module.exports = function ParcheesiGame(options) {
     for (var i = 0; i < realNumberOfPlayers; i += 1) {
         game.players.push(new Player(CONSTANTS.colors[i]));
     }
-
-    currentTurn = utils.randomize(0, realNumberOfPlayers - 1);
 
     return game;
 };
