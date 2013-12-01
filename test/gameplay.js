@@ -100,6 +100,11 @@ describe('Parcheesi Core', function() {
         });
 
         it('shouldn\'t allow players to take out a Pawn when a five(5/x) is NOT rolled', function() {
+            game = new ParcheesiGame({
+                startingTurn: 0,
+                dices: [new dice(3), new dice(4)]
+            });
+
             sinon.stub(game, 'throwDices').returns([3, 4]);
             sinon.stub(game, 'lastDiceThrow').returns([3, 4]);
             sinon.stub(game, 'currentTurn').returns(0);
@@ -111,6 +116,11 @@ describe('Parcheesi Core', function() {
         });
 
         it('should allow the player to take out two Pawns when a double five (5/5) is rolled', function() {
+            game = new ParcheesiGame({
+                startingTurn: 0,
+                dices: [new dice(5), new dice(5)]
+            });
+
             sinon.stub(game, 'throwDices').returns([5, 5]);
             sinon.stub(game, 'lastDiceThrow').returns([5, 5]);
             sinon.stub(game, 'currentTurn').returns(0);
@@ -131,13 +141,16 @@ describe('Parcheesi Core', function() {
         });
 
         it('should keep track of moves already performed (move pawn)', function() {
-            sinon.stub(game, 'throwDices').returns([5, 4]);
-            sinon.stub(game, 'lastDiceThrow').returns([5, 4]);
+            game = new ParcheesiGame({
+                startingTurn: 0,
+                dices: [new dice(5), new dice(4)]
+            });
 
             game.throwDices();
             var currentTurn = game.currentTurn();
 
             game.enterPawn(currentTurn);
+            debugger
             game.movePawn(currentTurn, 0, 4);
 
             _und.last(game.moveLog).usedMoves.should.eql([5, 4]);
@@ -161,18 +174,15 @@ describe('Parcheesi Core', function() {
         it('should pass the turn after all player moves are made on the board', function() {
             var game = new ParcheesiGame({
                 startingTurn: 0,
-                dices: [new dice(5)]
-            }),
+                dices: [new dice(5), new dice(4)]
+            });
 
-                currentTurn = game.currentTurn(),
-                diceRoll = game.throwDices(currentTurn),
-                withouthFives = _und.without(diceRoll, 5),
-                spacesToMove = withouthFives.length === 0 ? 5 : withouthFives[0];
+            game.throwDices(0);
 
-            game.enterPawn(currentTurn);
-            game.movePawn(currentTurn, 0, spacesToMove);
+            game.enterPawn(0);
+            game.movePawn(0, 0, 4);
 
-            game.currentTurn().should.not.eql(currentTurn);
+            game.currentTurn().should.not.eql(0);
         });
 
         it('should limit the turn number according to the quantity of players', function() {
@@ -213,5 +223,9 @@ describe('Parcheesi Core', function() {
             'enter using five spaces or less', function() {
                 assert.fail();
             });
+
+        it.skip('should calculate valid moves for current player', function () {
+            assert.fail();
+        });
     });
 });

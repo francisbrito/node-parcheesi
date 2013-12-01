@@ -6,7 +6,9 @@
 'use strict';
 
 var assert = require('assert'),
-    parcheesi = require('./../parcheesi');
+    testUtils = require('./test_utils'),
+    dice = require('./../dice'),
+    ParcheesiGame = require('./../parcheesi');
 
 describe('Parcheesi Core', function() {
     describe('Pawn', function() {
@@ -14,11 +16,40 @@ describe('Parcheesi Core', function() {
         var game;
 
         beforeEach(function(){
-            game = new parcheesi.ParcheesiGame();
+            game = new ParcheesiGame({
+                startingTurn: 0
+            });
         });
 
-        it.skip('cannot move more spaces than the ones on the dice throw', function() {
-            assert.fail();
+        it('cannot move more spaces than the ones on the dice throw', function() {
+            game = new ParcheesiGame({
+                startingTurn: 0,
+                dices: [new dice(2), new dice(3)]
+            });
+            
+            testUtils.positionPawnOnStart(game, 0);
+            game.throwDices();
+
+            (function(){
+                game.movePawn(0, 0, 4);    
+            }).should.throw('Cannot make move that isn\'t present on last dice roll');
+            
+        });
+
+        it('cannot repeat a move already made from the dice roll', function(){
+             game = new ParcheesiGame({
+                startingTurn: 0,
+                dices: [new dice(2), new dice(3)]
+            });
+            
+            testUtils.positionPawnOnStart(game, 0);
+            game.throwDices();
+
+            (function(){
+                game.movePawn(0, 0, 2);
+                game.movePawn(0, 0, 2);
+            }).should.throw();
+            
         });
 
         //TODO: It needs to move EXACTLY the spaces on the dice

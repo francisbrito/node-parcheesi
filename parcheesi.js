@@ -14,7 +14,7 @@ module.exports = function ParcheesiGame(options) {
 
     //Checks that object is always constructed using 'new'
     if (!(this instanceof ParcheesiGame)) {
-        return new ParcheesiGame(options);
+            return new ParcheesiGame(options);
     }
 
     options = options || {};
@@ -146,7 +146,6 @@ module.exports = function ParcheesiGame(options) {
             //Register last event
             lastEntry.usedMoves.push(diceRoll);
 
-
             // var allDiceMovesUsed = _und.difference(lastRoll, lastEntry.usedMoves).length === 0;
             var allDiceMovesUsed = lastRoll.length === lastEntry.usedMoves.length;
 
@@ -188,13 +187,29 @@ module.exports = function ParcheesiGame(options) {
             validateIsAbleToPlay(player, currentTurn);
 
             //TODO: Move this over to validateIsAbleToPlay as well
+            //Pawn must be defined
             var pawn = player.pawns[pawnIndex];
             if (pawn === undefined)
                 throw new Error('Pawn is not defined');
 
+            //Pawn to me moved should be on the board
             var currentPosition = pawn.position || -1;
             if (currentPosition === -1)
                 throw new Error('Pawn is still inside player\'s home');
+
+            //Pawns can only move on available diceRoll numbers
+            if (!_und.contains(this.lastDiceThrow(), movesToMake))
+                throw new Error('Cannot make move that isn\'t present on last dice roll');
+
+            var usedMoves = this.moveLog[moveCounter] !== undefined ? this.moveLog[moveCounter].usedMoves : [];
+            var availableMoves = utils.getAvailableDiceMoves(this.lastDiceThrow(), usedMoves);
+            if (!_und.contains(availableMoves, movesToMake)){
+                debugger
+                throw new Error('Invalid move');
+            }
+
+            //Check move log. Cannot repeat the movement
+            //Check dices, cannot use a value that's not on the allowed moves list
 
             //If program control reaches this point it means that the pawn can move
             var totalMovesToMake = (movesToMake === 6) ? 12 : movesToMake;

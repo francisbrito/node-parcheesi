@@ -1,6 +1,7 @@
 REPORTER = spec
 test: 
-	./node_modules/mocha/bin/mocha --reporter $(REPORTER)
+	# ./node_modules/mocha/bin/mocha --reporter spec
+	mocha --recursive --reporter spec
 .PHONY: test
 
 # test:

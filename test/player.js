@@ -72,7 +72,6 @@ describe('Parcheesi Core', function() {
             });
             
             (function(){
-                debugger
                 game.throwDices();
                 game.enterPawn(1);
             }).should.throw();
