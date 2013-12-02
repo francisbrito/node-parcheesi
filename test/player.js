@@ -140,8 +140,22 @@ describe('Parcheesi Core', function() {
             game.spaces[12].pawns.should.have.lengthOf(2);
         });
 
-        it.skip('cannot use additional spaces gained from a kill using the same pawn', function() {
-            assert.fail();
+        it('cannot use additional spaces gained from a kill using the same pawn', function() {
+             game = new ParcheesiGame({
+                startingTurn: 0,
+                dices: [new dice(5), new dice(2)]
+            });
+
+            testUtils.positionPawn(game, 1, 0, 7);
+            testUtils.positionPawn(game, 0, 0, 5);
+            testUtils.positionPawn(game, 0, 1, 14);
+
+            (function(){
+                game.throwDices();
+                game.movePawn(0,0,2);
+                game.movePawn(0,0,10);
+            }).should.throw();
+
         });
 
         it.skip('should get additional spaces added to the turn after reaching heaven', function() {

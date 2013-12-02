@@ -47,6 +47,7 @@ describe('Parcheesi Core', function() {
 
             (function(){
                 game.movePawn(0, 0, 2);
+                debugger
                 game.movePawn(0, 0, 2);
             }).should.throw();
             

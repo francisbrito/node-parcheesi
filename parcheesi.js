@@ -19,7 +19,7 @@ module.exports = function ParcheesiGame(options) {
 
     options = options || {};
 
-    var lastDiceRoll, 
+    var lastDiceRoll,
         dices = _und.extend([new dice(), new dice()], options.dices),
         remainingDiceThrows = 1,
         moveCounter = 0,
@@ -30,7 +30,7 @@ module.exports = function ParcheesiGame(options) {
         throw new Error('Wrong number of players');
     }
 
-    var generatePlayers = function(){
+    var generatePlayers = function() {
         var players = [];
         for (var i = 0; i < realNumberOfPlayers; i += 1) {
             players.push(new Player(CONSTANTS.colors[i], i));
@@ -39,223 +39,225 @@ module.exports = function ParcheesiGame(options) {
         return players;
     },
 
-    generateSpaces = function () {
-        var spaces = new Array(68);
+        generateSpaces = function() {
+            var spaces = new Array(68);
 
-        for (var i = 0; i < spaces.length; i += 1) {
-            var quarterSection = Math.floor(i / 17);
+            for (var i = 0; i < spaces.length; i += 1) {
+                var quarterSection = Math.floor(i / 17);
 
-            var isSpecial = ((i === quarterSection * 17 + 0) ||
-                (i === quarterSection * 17 + 5) ||
-                (i === quarterSection * 17 + 12));
+                var isSpecial = ((i === quarterSection * 17 + 0) ||
+                    (i === quarterSection * 17 + 5) ||
+                    (i === quarterSection * 17 + 12));
 
-            var startingSpace = (i === quarterSection * 17 + 5) ? CONSTANTS.colors[quarterSection] : false;
+                var startingSpace = (i === quarterSection * 17 + 5) ? CONSTANTS.colors[quarterSection] : false;
 
-            spaces[i] = new Space(i, isSpecial, startingSpace);
-        }
-        return spaces;
-    },
-    
-    generateStairs = function () {
-        var stairs = new Array(4);
-
-        for (var i = 0; i < stairs.length; i += 1) {
-            stairs[i] = {
-                color: CONSTANTS.colors[i],
-                spaces: new Array(8)
-            };
-        }
-        return stairs;
-    },
-
-    //Checks that a player is able to play
-    validateIsAbleToPlay = function(player, currentTurn){
-        if (player === undefined)
-            throw new Error('Player is not defined');
-        
-        if (player.index !== currentTurn)
-            throw new Error('It\'s not the current player\'s turn');
-    },
-
-    game = {
-        spaces: generateSpaces(),
-        stairs: generateStairs(),
-        players: generatePlayers(),
-        moveLog: [],
-
-        currentTurn: function () {
-            return currentTurn;
-        },
-
-        lastDiceThrow: function () {
-            return lastDiceRoll;
-        },
-
-        throwDices: function (playerIndex, numberOfDice) {
-            //If the dice is being rolled by a player and it has no remaining throws, throw an error
-            if (playerIndex !== undefined && remainingDiceThrows < 1)
-                throw new Error('Player cannot throw the dice more than once per turn');
-
-            var numberToThrow = numberOfDice || 2;
-            lastDiceRoll = [];
-
-            for (var i = 0; i < numberToThrow; i++) {
-                lastDiceRoll.push(dices[i].roll());
+                spaces[i] = new Space(i, isSpecial, startingSpace);
             }
-
-            //Only if the dice roll is associated with a player the remaininDiceThrow counter is decreased
-            if (playerIndex !== undefined)
-                remainingDiceThrows--;
-
-            return this.lastDiceThrow();
+            return spaces;
         },
 
-        getStartingSpace: function (colorName) {
-            var filtered = _und.filter(this.spaces, function (item) {
-                return item.isStartingSpace() === colorName;
-            });
+        generateStairs = function() {
+            var stairs = new Array(4);
 
-            return _und.first(filtered);
-        },
-
-        drawBoard: function () {
-            //TODO: Assign an issue on github to draw the board!
-            console.log('someday a board will be drawn here');
-        },
-
-        manageTurn: function (playerIndex, pawnIndex, nextPosition, diceRoll) {
-            if (this.moveLog.length === playerIndex) {
-                this.moveLog.push({
-                    'playerIndex': playerIndex,
-                    'usedMoves': []
-                });
-            }
-
-            var lastEntry = this.moveLog[moveCounter];
-
-            if (lastEntry === undefined) {
-                //TODO: This should be a class instance as well, to avoid repetition
-                lastEntry = {
-                    'playerIndex': playerIndex,
-                    'usedMoves': []
+            for (var i = 0; i < stairs.length; i += 1) {
+                stairs[i] = {
+                    color: CONSTANTS.colors[i],
+                    spaces: new Array(8)
                 };
             }
-
-            //Register last event
-            lastEntry.usedMoves.push(diceRoll);
-
-            // var allDiceMovesUsed = _und.difference(this.lastDiceThrow(), lastEntry.usedMoves).length === 0;
-            var allDiceMovesUsed = this.lastDiceThrow().length === lastEntry.usedMoves.length;
-
-            //If player has used all possible moves, change the turn
-            if (allDiceMovesUsed && remainingDiceThrows === 0) {
-                currentTurn = (currentTurn === realNumberOfPlayers - 1) ? 0 : currentTurn + 1;
-                moveCounter += 1;
-                remainingDiceThrows = 1;
-            }
+            return stairs;
         },
 
-        enterPawn: function (playerIndex) {
-            var player = this.players[playerIndex];
-            validateIsAbleToPlay(player, currentTurn);
+        //Checks that a player is able to play
+        validateIsAbleToPlay = function(player, currentTurn) {
+            if (player === undefined)
+                throw new Error('Player is not defined');
 
-            var filtered = _und.filter(player.pawns, function (item) {
-                return item.position === -1;
-            });
-
-            if (filtered.length === 0)
-                throw new Error('All player\'s pawns are outside of the Home');
-
-            if (!_und.contains(this.lastDiceThrow(), 5)) {
-                throw new Error('Player must roll a five(5) to enter pawn');
-            }
-
-            var pawn = _und.first(filtered);
-            var startingSpace = this.getStartingSpace(player.color);
-
-            startingSpace.pawns.push(pawn);
-            pawn.position = startingSpace.currentIndex();
-
-            //TODO: need to find a way to pass the index of the pawn here
-            this.manageTurn(playerIndex, pawn.index, startingSpace.currentIndex(), 5);
+            if (player.index !== currentTurn)
+                throw new Error('It\'s not the current player\'s turn');
         },
 
-        movePawn: function(playerIndex, pawnIndex, movesToMake) {
-            var player = this.players[playerIndex];
-            validateIsAbleToPlay(player, currentTurn);
+        game = {
+            spaces: generateSpaces(),
+            stairs: generateStairs(),
+            players: generatePlayers(),
+            moveLog: [],
 
-            //TODO: Move this over to validateIsAbleToPlay as well
-            //Pawn must be defined
-            var pawn = player.pawns[pawnIndex];
-            if (pawn === undefined)
-                throw new Error('Pawn is not defined');
+            currentTurn: function() {
+                return currentTurn;
+            },
 
-            //Pawn to me moved should be on the board
-            var currentPosition = pawn.position || -1;
-            if (currentPosition === -1){
-                throw new Error('Pawn is still inside player\'s home');
-            }
+            lastDiceThrow: function() {
+                return lastDiceRoll;
+            },
 
-            //Pawns can only move on available diceRoll numbers
-            if (!_und.contains(this.lastDiceThrow(), movesToMake))
-                throw new Error('Cannot make move that isn\'t present on last dice roll');
+            throwDices: function(playerIndex, numberOfDice) {
+                //If the dice is being rolled by a player and it has no remaining throws, throw an error
+                if (playerIndex !== undefined && remainingDiceThrows < 1)
+                    throw new Error('Player cannot throw the dice more than once per turn');
 
-            //Pawns cannot repeat an already made move from the dice roll
-            var usedMoves = this.moveLog[moveCounter] !== undefined ? this.moveLog[moveCounter].usedMoves : [];
-            var availableMoves = utils.getAvailableDiceMoves(this.lastDiceThrow(), usedMoves);
-            if (!_und.contains(availableMoves, movesToMake)){
-                throw new Error('Invalid move');
-            }
+                var numberToThrow = numberOfDice || 2;
+                lastDiceRoll = [];
 
-            //If program control reaches this point it means that the pawn can move
-            var totalMovesToMake = (movesToMake === 6) ? 12 : movesToMake;
-            var nextPosition = currentPosition + totalMovesToMake;
-            if (nextPosition > 67)
-                nextPosition = nextPosition - 68;
+                for (var i = 0; i < numberToThrow; i++) {
+                    lastDiceRoll.push(dices[i].roll());
+                }
 
-            var currentSpace = this.spaces[currentPosition];
-            var betweenSpaces = this.spaces.slice(currentPosition+1, nextPosition+1);
-            var nextSpace = this.spaces[nextPosition];
+                //Only if the dice roll is associated with a player the remaininDiceThrow counter is decreased
+                if (playerIndex !== undefined)
+                    remainingDiceThrows--;
 
+                return this.lastDiceThrow();
+            },
 
-            if (!_und.contains(currentSpace.pawns, pawn))
-                throw new Error('Unexpected error. The pawn wasn\'t on the allocated space');
-            
-            
-            //check wether there is a barrier blocking the way
-            var barriersInTheWay = _und.filter(betweenSpaces, function(space){
-                var filtered =_und.filter(space.pawns, function(item){
-                    return item.color !== pawn.color;
+            getStartingSpace: function(colorName) {
+                var filtered = _und.filter(this.spaces, function(item) {
+                    return item.isStartingSpace() === colorName;
                 });
 
-                return filtered !== undefined && filtered.length === 2;
-            });
-            if (barriersInTheWay.length > 0)
-                throw new Error('Cannot complete move, there is a barrier on the way');
+                return _und.first(filtered);
+            },
+
+            drawBoard: function() {
+                //TODO: Assign an issue on github to draw the board!
+                console.log('someday a board will be drawn here');
+            },
+
+            manageTurn: function(playerIndex, pawnIndex, nextPosition, diceRoll) {
+                if (this.moveLog.length === playerIndex) {
+                    this.moveLog.push({
+                        'playerIndex': playerIndex,
+                        'usedMoves': []
+                    });
+                }
+
+                var lastEntry = this.moveLog[moveCounter];
+
+                if (lastEntry === undefined) {
+                    //TODO: This should be a class instance as well, to avoid repetition
+                    lastEntry = {
+                        'playerIndex': playerIndex,
+                        'usedMoves': []
+                    };
+                }
+
+                //Register last event
+                lastEntry.usedMoves.push({
+                    pawn: pawnIndex,
+                    value: diceRoll,
+                });
+
+                var allDiceMovesUsed = this.lastDiceThrow().length === lastEntry.usedMoves.length;
+
+                //If player has used all possible moves, change the turn
+                if (allDiceMovesUsed && remainingDiceThrows === 0) {
+                    currentTurn = (currentTurn === realNumberOfPlayers - 1) ? 0 : currentTurn + 1;
+                    moveCounter += 1;
+                    remainingDiceThrows = 1;
+                }
+            },
+
+            enterPawn: function(playerIndex) {
+                var player = this.players[playerIndex];
+                validateIsAbleToPlay(player, currentTurn);
+
+                var filtered = _und.filter(player.pawns, function(item) {
+                    return item.position === -1;
+                });
+
+                if (filtered.length === 0)
+                    throw new Error('All player\'s pawns are outside of the Home');
+
+                if (!_und.contains(this.lastDiceThrow(), 5)) {
+                    throw new Error('Player must roll a five(5) to enter pawn');
+                }
+
+                var pawn = _und.first(filtered);
+                var startingSpace = this.getStartingSpace(player.color);
+
+                startingSpace.pawns.push(pawn);
+                pawn.position = startingSpace.currentIndex();
+
+                //TODO: need to find a way to pass the index of the pawn here
+                this.manageTurn(playerIndex, pawn.index, startingSpace.currentIndex(), 5);
+            },
+
+            movePawn: function(playerIndex, pawnIndex, movesToMake) {
+                var player = this.players[playerIndex];
+                validateIsAbleToPlay(player, currentTurn);
+
+                //TODO: Move this over to validateIsAbleToPlay as well
+                //Pawn must be defined
+                var pawn = player.pawns[pawnIndex];
+                if (pawn === undefined)
+                    throw new Error('Pawn is not defined');
+
+                //Pawn to be moved should be on the board
+                var currentPosition = pawn.position || -1;
+                if (currentPosition === -1) {
+                    throw new Error('Pawn is still inside player\'s home');
+                }
+
+                //Pawns can only move on available diceRoll numbers
+                if (!_und.contains(this.lastDiceThrow(), movesToMake))
+                    throw new Error('Cannot make move that isn\'t present on last dice roll');
+
+                //Pawns cannot repeat an already made move from the dice roll
+                var usedMoves = this.moveLog[moveCounter] !== undefined ? this.moveLog[moveCounter].usedMoves : [];
+                var availableMoves = utils.getAvailableDiceMoves(this.lastDiceThrow(), usedMoves, pawnIndex);
+                if (!_und.contains(availableMoves, movesToMake)) {
+                    throw new Error('Invalid move');
+                }
+
+                //If program control reaches this point it means that the pawn can move
+                var totalMovesToMake = (movesToMake === 6) ? 12 : movesToMake;
+                var nextPosition = currentPosition + totalMovesToMake;
+                if (nextPosition > 67)
+                    nextPosition = nextPosition - 68;
+
+                var currentSpace = this.spaces[currentPosition];
+                var betweenSpaces = this.spaces.slice(currentPosition + 1, nextPosition + 1);
+                var nextSpace = this.spaces[nextPosition];
 
 
-            //check for enemies and kill if possible
-            //TODO: should this be on a method?
-            var pawnsOnNextSpace = _und.filter(nextSpace.pawns, function(item){
-                return item.color != pawn.color;
-            });
-            if (pawnsOnNextSpace.length > 0 && !nextSpace.isSafe()){
-                pawnsOnNextSpace[0].position = -1;
-                nextSpace.pawns = _und.without(nextSpace.pawns, pawnsOnNextSpace[0]);
-                lastDiceRoll.push(CONSTANTS.extraMovesOnKill);
+                if (!_und.contains(currentSpace.pawns, pawn))
+                    throw new Error('Unexpected error. The pawn wasn\'t on the allocated space');
+
+
+                //check wether there is a barrier blocking the way
+                var barriersInTheWay = _und.filter(betweenSpaces, function(space) {
+                    var filtered = _und.filter(space.pawns, function(item) {
+                        return item.color !== pawn.color;
+                    });
+
+                    return filtered !== undefined && filtered.length === 2;
+                });
+                if (barriersInTheWay.length > 0)
+                    throw new Error('Cannot complete move, there is a barrier on the way');
+
+
+                //check for enemies and kill if possible
+                //TODO: should this be on a method?
+                var pawnsOnNextSpace = _und.filter(nextSpace.pawns, function(item) {
+                    return item.color != pawn.color;
+                });
+                if (pawnsOnNextSpace.length > 0 && !nextSpace.isSafe()) {
+                    pawnsOnNextSpace[0].position = -1;
+                    nextSpace.pawns = _und.without(nextSpace.pawns, pawnsOnNextSpace[0]);
+                    lastDiceRoll.push(CONSTANTS.extraMovesOnKill);
+                }
+
+                //Movement
+                currentSpace.pawns = _und.without(currentSpace.pawns, pawn);
+                nextSpace.pawns.push(pawn);
+                pawn.position = nextPosition;
+
+                //TODO: maybe the pawn could have an event emitter, and each time we 
+                //change the position then it would simply move to the right position
+                this.manageTurn(playerIndex, pawnIndex, nextPosition, movesToMake);
+
             }
-
-            //Movement
-            currentSpace.pawns = _und.without(currentSpace.pawns, pawn);
-            nextSpace.pawns.push(pawn);
-            pawn.position = nextPosition;
-
-            //TODO: maybe the pawn could have an event emitter, and each time we 
-            //change the position then it would simply move to the right position
-            this.manageTurn(playerIndex, pawnIndex, nextPosition, movesToMake);
-            
-        }
-    };
+        };
 
     return game;
 };

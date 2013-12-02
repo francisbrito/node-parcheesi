@@ -12,9 +12,11 @@ module.exports = (function() {
 			return Math.floor(Math.random() * (max - min + 1) + min);
 		},
 
-		getAvailableDiceMoves: function(diceThrow, usedMoves) {
+		getAvailableDiceMoves: function(diceThrow, usedMoves, pawnIndex) {
 			var closuredDice = _und.clone(diceThrow);
-			var closuredMoves = _und.clone(usedMoves);
+			var closuredMoves = _und.map(usedMoves, function(item){
+				return item.value;
+			});
 
 			for (var i = 0; i < closuredDice.length; i++) {
 				var existing = _und.indexOf(closuredMoves, closuredDice[i]);

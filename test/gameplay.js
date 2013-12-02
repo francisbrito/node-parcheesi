@@ -67,7 +67,7 @@ describe('Parcheesi Core', function() {
             var pawn = game.players[0].pawns[0];
             game.spaces[10].pawns.push(pawn);
             pawn.position = 10;
-            
+
             game.throwDices();
             game.movePawn(0, 0, 6);
 
@@ -131,13 +131,18 @@ describe('Parcheesi Core', function() {
         });
 
         it('should keep track of moves already performed (enter pawn)', function() {
-            sinon.stub(game, 'throwDices').returns([5, 4]);
-            sinon.stub(game, 'lastDiceThrow').returns([5, 4]);
+            game = new ParcheesiGame({
+                startingTurn: 0,
+                dices: [new dice(5), new dice(5)]
+            });
 
             game.throwDices();
-            game.enterPawn(game.currentTurn());
+            game.enterPawn(0);
 
-            _und.last(game.moveLog).usedMoves.should.contain(5);
+            var usedMoves = _und.last(game.moveLog).usedMoves;
+            _und.where(usedMoves, {
+                value: 5
+            }).should.have.lengthOf(1);
         });
 
         it('should keep track of moves already performed (move pawn)', function() {
@@ -152,11 +157,14 @@ describe('Parcheesi Core', function() {
             game.enterPawn(currentTurn);
             game.movePawn(currentTurn, 0, 4);
 
-            _und.last(game.moveLog).usedMoves.should.eql([5, 4]);
+            var usedMoves = _und.last(game.moveLog).usedMoves;
+            _und.map(usedMoves, function(item) {
+                return item.value;
+            }).should.eql([5, 4]);
         });
 
-        it('should keep track of multiple moves performed (move pawn multiple times)', function () {
-             game = new ParcheesiGame({
+        it('should keep track of multiple moves performed (move pawn multiple times)', function() {
+            game = new ParcheesiGame({
                 numberOfPlayers: 2,
                 startingTurn: 0
             });
@@ -223,7 +231,7 @@ describe('Parcheesi Core', function() {
                 assert.fail();
             });
 
-        it.skip('should calculate valid moves for current player', function () {
+        it.skip('should calculate valid moves for current player', function() {
             assert.fail();
         });
     });
