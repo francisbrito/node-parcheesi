@@ -14,17 +14,16 @@ module.exports = function ParcheesiGame(options) {
 
     //Checks that object is always constructed using 'new'
     if (!(this instanceof ParcheesiGame)) {
-            return new ParcheesiGame(options);
+        return new ParcheesiGame(options);
     }
 
     options = options || {};
 
-    var lastDiceRoll,
+    var lastDiceRoll, 
         dices = _und.extend([new dice(), new dice()], options.dices),
         remainingDiceThrows = 1,
         moveCounter = 0,
         realNumberOfPlayers = options.numberOfPlayers || 2,
-        //TODO: THIS IS TOO LONG, FIND A SHORTHAND
         currentTurn = (options.startingTurn !== undefined) ? options.startingTurn : utils.randomize(0, realNumberOfPlayers - 1);
 
     if (realNumberOfPlayers > 4) {
@@ -104,7 +103,7 @@ module.exports = function ParcheesiGame(options) {
                 lastDiceRoll.push(dices[i].roll());
             }
 
-            //Only if the dice throw is associated with a player the remaining Dice Throw is decreased
+            //Only if the dice roll is associated with a player the remaininDiceThrow counter is decreased
             if (playerIndex !== undefined)
                 remainingDiceThrows--;
 
@@ -201,19 +200,15 @@ module.exports = function ParcheesiGame(options) {
             if (!_und.contains(this.lastDiceThrow(), movesToMake))
                 throw new Error('Cannot make move that isn\'t present on last dice roll');
 
+            //Pawns cannot repeat an already made move from the dice roll
             var usedMoves = this.moveLog[moveCounter] !== undefined ? this.moveLog[moveCounter].usedMoves : [];
             var availableMoves = utils.getAvailableDiceMoves(this.lastDiceThrow(), usedMoves);
             if (!_und.contains(availableMoves, movesToMake)){
-                debugger
                 throw new Error('Invalid move');
             }
 
-            //Check move log. Cannot repeat the movement
-            //Check dices, cannot use a value that's not on the allowed moves list
-
             //If program control reaches this point it means that the pawn can move
             var totalMovesToMake = (movesToMake === 6) ? 12 : movesToMake;
-
             var nextPosition = currentPosition + totalMovesToMake;
             if (nextPosition > 67)
                 nextPosition = nextPosition - 68;
@@ -221,18 +216,29 @@ module.exports = function ParcheesiGame(options) {
             var currentSpace = this.spaces[currentPosition];
             var nextSpace = this.spaces[nextPosition];
 
-            if (_und.contains(currentSpace.pawns, pawn)) {
-                currentSpace.pawns = _und.without(currentSpace.pawns, pawn);
-                nextSpace.pawns.push(pawn);
-                pawn.position = nextPosition;
-
-                //TODO: maybe the pawn could have an event emitter, and each time we 
-                //change the position then it would simply move to the right position
-                this.manageTurn(playerIndex, pawnIndex, nextPosition, movesToMake);
-                
-            } else {
+            if (!_und.contains(currentSpace.pawns, pawn))
                 throw new Error('Unexpected error. The pawn wasn\'t on the allocated space');
+            
+            //Check for enemies and kill if possible
+            var pawnsOnNextSpace = _und.filter(nextSpace.pawns, function(item){
+                return item.color != pawn.color;
+            });
+
+            if (pawnsOnNextSpace.length > 0){
+                pawnsOnNextSpace[0].position = -1;
+                nextSpace.pawns = _und.without(nextSpace.pawns, pawnsOnNextSpace[0]);
             }
+
+            //Movement
+            currentSpace.pawns = _und.without(currentSpace.pawns, pawn);
+            nextSpace.pawns.push(pawn);
+            pawn.position = nextPosition;
+
+            //TODO: maybe the pawn could have an event emitter, and each time we 
+            //change the position then it would simply move to the right position
+            
+            this.manageTurn(playerIndex, pawnIndex, nextPosition, movesToMake);
+            
         }
     };
 

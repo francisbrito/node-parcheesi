@@ -37,7 +37,7 @@ describe('Parcheesi Core', function() {
         });
 
         it('cannot repeat a move already made from the dice roll', function(){
-             game = new ParcheesiGame({
+            game = new ParcheesiGame({
                 startingTurn: 0,
                 dices: [new dice(2), new dice(3)]
             });
@@ -52,10 +52,20 @@ describe('Parcheesi Core', function() {
             
         });
 
-        //TODO: It needs to move EXACTLY the spaces on the dice
+        it('can\'t occupy the same safe space as an oponent\'s Pawn', function() {
+            game = new ParcheesiGame({
+                startingTurn: 0,
+                dices: [new dice(5), new dice(2)]
+            });
 
-        it.skip('can\'t occupy the same safe space as an oponent\'s Pawn', function() {
-            assert.fail();
+            testUtils.positionPawn(game, 1, 0, 7);
+            
+            game.throwDices();
+
+            game.enterPawn(0,0);
+            game.movePawn(0,0,2);
+            
+            game.spaces[7].pawns.should.have.lengthOf(1);
         });
 
         it.skip('should form a barrier if two occupy the same space', function() {

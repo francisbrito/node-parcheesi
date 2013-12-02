@@ -6,5 +6,5 @@
 module.exports = function Pawn(color, index) {
     this.color = color;
     this.position = -1;
-    this.index = index || -1;
+    this.index = index;
 };
