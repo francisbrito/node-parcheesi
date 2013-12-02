@@ -131,8 +131,7 @@ module.exports = function ParcheesiGame(options) {
                 });
             }
 
-            var lastRoll = this.lastDiceThrow(),
-                lastEntry = this.moveLog[moveCounter];
+            var lastEntry = this.moveLog[moveCounter];
 
             if (lastEntry === undefined) {
                 //TODO: This should be a class instance as well, to avoid repetition
@@ -145,8 +144,8 @@ module.exports = function ParcheesiGame(options) {
             //Register last event
             lastEntry.usedMoves.push(diceRoll);
 
-            // var allDiceMovesUsed = _und.difference(lastRoll, lastEntry.usedMoves).length === 0;
-            var allDiceMovesUsed = lastRoll.length === lastEntry.usedMoves.length;
+            // var allDiceMovesUsed = _und.difference(this.lastDiceThrow(), lastEntry.usedMoves).length === 0;
+            var allDiceMovesUsed = this.lastDiceThrow().length === lastEntry.usedMoves.length;
 
             //If player has used all possible moves, change the turn
             if (allDiceMovesUsed && remainingDiceThrows === 0) {
@@ -236,13 +235,15 @@ module.exports = function ParcheesiGame(options) {
 
 
             //check for enemies and kill if possible
+            //TODO: should this be on a method?
             var pawnsOnNextSpace = _und.filter(nextSpace.pawns, function(item){
                 return item.color != pawn.color;
             });
             if (pawnsOnNextSpace.length > 0){
                 pawnsOnNextSpace[0].position = -1;
                 nextSpace.pawns = _und.without(nextSpace.pawns, pawnsOnNextSpace[0]);
-            }//TODO: should this be on a method?
+                lastDiceRoll.push(10);
+            }
 
             //Movement
             currentSpace.pawns = _und.without(currentSpace.pawns, pawn);
@@ -251,7 +252,6 @@ module.exports = function ParcheesiGame(options) {
 
             //TODO: maybe the pawn could have an event emitter, and each time we 
             //change the position then it would simply move to the right position
-            
             this.manageTurn(playerIndex, pawnIndex, nextPosition, movesToMake);
             
         }
