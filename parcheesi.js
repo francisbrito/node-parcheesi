@@ -239,10 +239,10 @@ module.exports = function ParcheesiGame(options) {
             var pawnsOnNextSpace = _und.filter(nextSpace.pawns, function(item){
                 return item.color != pawn.color;
             });
-            if (pawnsOnNextSpace.length > 0){
+            if (pawnsOnNextSpace.length > 0 && !nextSpace.isSafe()){
                 pawnsOnNextSpace[0].position = -1;
                 nextSpace.pawns = _und.without(nextSpace.pawns, pawnsOnNextSpace[0]);
-                lastDiceRoll.push(10);
+                lastDiceRoll.push(CONSTANTS.extraMovesOnKill);
             }
 
             //Movement

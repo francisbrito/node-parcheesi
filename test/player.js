@@ -5,9 +5,10 @@
 
 'use strict';
 
-var assert = require('assert'),
+var CONSTANTS = require('./../constants'),
+    assert = require('assert'),
     _und = require('underscore'),
-    testUtils = require('./test_utils.js'),
+    testUtils = require('./test_utils'),
     dice = require('./../dice'),
     ParcheesiGame = require('./../parcheesi');
 
@@ -121,14 +122,25 @@ describe('Parcheesi Core', function() {
             game.enterPawn(0,0);
             game.movePawn(0,0,2);
 
-            assert(_und.contains(game.lastDiceThrow(), 10));
+            assert(_und.contains(game.lastDiceThrow(), CONSTANTS.extraMovesOnKill));
+        });
+
+        it('should\'nt be able to kill an oponent Pawn while on a safe zone', function() {
+            game = new ParcheesiGame({
+                startingTurn: 0,
+                dices: [new dice(5), new dice(2)]
+            });
+
+            testUtils.positionPawn(game, 0, 0, 10);
+            testUtils.positionPawn(game, 1, 0, 12);
+
+            game.throwDices();
+            game.movePawn(0,0,2);
+
+            game.spaces[12].pawns.should.have.lengthOf(2);
         });
 
         it.skip('cannot use additional spaces gained from a kill using the same pawn', function() {
-            assert.fail();
-        });
-
-        it.skip('should\'nt be able to kill an oponent Pawn while on a safe zone', function() {
             assert.fail();
         });
 
