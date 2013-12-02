@@ -215,7 +215,7 @@ module.exports = function ParcheesiGame(options) {
                 nextPosition = nextPosition - 68;
 
             var currentSpace = this.spaces[currentPosition];
-            var betweenSpaces = this.spaces.slice(currentPosition+1, nextPosition);
+            var betweenSpaces = this.spaces.slice(currentPosition+1, nextPosition+1);
             var nextSpace = this.spaces[nextPosition];
 
 

@@ -68,7 +68,7 @@ describe('Parcheesi Core', function() {
         });
 
         it('should form a barrier if two occupy the same space', function() {
-             game = new ParcheesiGame({
+            game = new ParcheesiGame({
                 startingTurn: 0,
                 dices: [new dice(5), new dice(6)]
             });
@@ -84,8 +84,21 @@ describe('Parcheesi Core', function() {
             }).should.throw();
         });
 
-        it.skip('cannot occupy a space where there are already two pawns', function() {
-            assert.fail();
+        it('cannot occupy a space where there are already two pawns', function() {
+            game = new ParcheesiGame({
+                startingTurn: 0,
+                dices: [new dice(5), new dice(2)]
+            });
+
+            testUtils.positionPawn(game, 1, 0, 7);
+            testUtils.positionPawn(game, 1, 1, 7);
+            
+            (function(){
+                game.throwDices();
+                game.enterPawn(0,0);
+                debugger
+                game.movePawn(0,0,2);    
+            }).should.throw();
         });
 
         it.skip('blocks entry to other player\'s stairway entrance', function() {

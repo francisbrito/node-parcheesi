@@ -77,12 +77,35 @@ describe('Parcheesi Core', function() {
             }).should.throw();
         });
 
-        it.skip('should be able to decided which Pawns to move', function() {
-            assert.fail();
+        it('should be able to decided which Pawns to move', function() {
+             game = new ParcheesiGame({
+                startingTurn: 0,
+                dices: [new dice(6), new dice(2)]
+            });
+
+            var pawn1 = testUtils.positionPawn(game, 0, 0, 7);
+            var pawn2 = testUtils.positionPawn(game, 0, 1, 9);
+
+            game.throwDices();
+            game.movePawn(0,1,2);
+
+            pawn1.position.should.eql(7);
+            pawn2.position.should.eql(9+2);
         });
 
-        it.skip('should be able to kill an oponent\'s Pawn', function() {
-            assert.fail();
+        it('should be able to kill an oponent\'s Pawn', function() {
+            game = new ParcheesiGame({
+                startingTurn: 0,
+                dices: [new dice(5), new dice(2)]
+            });
+
+            testUtils.positionPawn(game, 1, 0, 7);
+            
+            game.throwDices();
+            game.enterPawn(0,0);
+            game.movePawn(0,0,2);
+
+            game.players[1].pawns[0].position.should.eql(-1);
         });
 
         it.skip('should get additional spaces added to the turn after killing an oponent\'s pawn', function() {
