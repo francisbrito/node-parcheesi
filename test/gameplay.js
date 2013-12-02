@@ -150,7 +150,6 @@ describe('Parcheesi Core', function() {
             var currentTurn = game.currentTurn();
 
             game.enterPawn(currentTurn);
-            debugger
             game.movePawn(currentTurn, 0, 4);
 
             _und.last(game.moveLog).usedMoves.should.eql([5, 4]);

@@ -61,19 +61,31 @@ describe('Parcheesi Core', function() {
             testUtils.positionPawn(game, 1, 0, 7);
             
             game.throwDices();
-
             game.enterPawn(0,0);
             game.movePawn(0,0,2);
-            
+
             game.spaces[7].pawns.should.have.lengthOf(1);
         });
 
-        it.skip('should form a barrier if two occupy the same space', function() {
-            assert.fail();
+        it('should form a barrier if two occupy the same space', function() {
+             game = new ParcheesiGame({
+                startingTurn: 0,
+                dices: [new dice(5), new dice(6)]
+            });
+
+            testUtils.positionPawn(game, 1, 0, 7);
+            testUtils.positionPawn(game, 1, 1, 7);
+            
+            (function(){
+                game.throwDices();
+                game.enterPawn(0,0);
+                debugger
+                game.movePawn(0,0,6);    
+            }).should.throw();
         });
 
         it.skip('cannot occupy a space where there are already two pawns', function() {
-
+            assert.fail();
         });
 
         it.skip('blocks entry to other player\'s stairway entrance', function() {

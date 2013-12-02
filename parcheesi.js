@@ -193,8 +193,9 @@ module.exports = function ParcheesiGame(options) {
 
             //Pawn to me moved should be on the board
             var currentPosition = pawn.position || -1;
-            if (currentPosition === -1)
+            if (currentPosition === -1){
                 throw new Error('Pawn is still inside player\'s home');
+            }
 
             //Pawns can only move on available diceRoll numbers
             if (!_und.contains(this.lastDiceThrow(), movesToMake))
@@ -214,20 +215,34 @@ module.exports = function ParcheesiGame(options) {
                 nextPosition = nextPosition - 68;
 
             var currentSpace = this.spaces[currentPosition];
+            var betweenSpaces = this.spaces.slice(currentPosition+1, nextPosition);
             var nextSpace = this.spaces[nextPosition];
+
 
             if (!_und.contains(currentSpace.pawns, pawn))
                 throw new Error('Unexpected error. The pawn wasn\'t on the allocated space');
             
-            //Check for enemies and kill if possible
+            
+            //check wether there is a barrier blocking the way
+            var barriersInTheWay = _und.filter(betweenSpaces, function(space){
+                var filtered =_und.filter(space.pawns, function(item){
+                    return item.color !== pawn.color;
+                });
+
+                return filtered !== undefined && filtered.length === 2;
+            });
+            if (barriersInTheWay.length > 0)
+                throw new Error('Cannot complete move, there is a barrier on the way');
+
+
+            //check for enemies and kill if possible
             var pawnsOnNextSpace = _und.filter(nextSpace.pawns, function(item){
                 return item.color != pawn.color;
             });
-
             if (pawnsOnNextSpace.length > 0){
                 pawnsOnNextSpace[0].position = -1;
                 nextSpace.pawns = _und.without(nextSpace.pawns, pawnsOnNextSpace[0]);
-            }
+            }//TODO: should this be on a method?
 
             //Movement
             currentSpace.pawns = _und.without(currentSpace.pawns, pawn);
