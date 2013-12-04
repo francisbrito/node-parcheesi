@@ -87,8 +87,12 @@ module.exports = function ParcheesiGame(options) {
                 return currentTurn;
             },
 
-            lastDiceThrow: function() {
-                return lastDiceRoll;
+            lastDiceThrow: function(simplifyResults) {
+                var simplifiedRoll = _und.map(lastDiceRoll, function(item){
+                    return (item.pawn !== undefined) ? item.value : item;
+                });
+
+                return simplifyResults ? simplifiedRoll : lastDiceRoll;
             },
 
             throwDices: function(playerIndex, numberOfDice) {
@@ -199,7 +203,7 @@ module.exports = function ParcheesiGame(options) {
                 }
 
                 //Pawns can only move on available diceRoll numbers
-                if (!_und.contains(this.lastDiceThrow(), movesToMake))
+                if (!_und.contains(this.lastDiceThrow(true), movesToMake))
                     throw new Error('Cannot make move that isn\'t present on last dice roll');
 
                 //Pawns cannot repeat an already made move from the dice roll
@@ -242,9 +246,12 @@ module.exports = function ParcheesiGame(options) {
                     return item.color != pawn.color;
                 });
                 if (pawnsOnNextSpace.length > 0 && !nextSpace.isSafe()) {
-                    pawnsOnNextSpace[0].position = -1;
+                    pawnsOnNextSpace[0].position = -1; //TODO: this is not always -1, look for a First() method on underscore
                     nextSpace.pawns = _und.without(nextSpace.pawns, pawnsOnNextSpace[0]);
-                    lastDiceRoll.push(CONSTANTS.extraMovesOnKill);
+                    lastDiceRoll.push({
+                        pawn: pawnIndex,
+                        value: CONSTANTS.extraMovesOnKill
+                    });
                 }
 
                 //Movement

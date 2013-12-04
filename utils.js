@@ -13,7 +13,9 @@ module.exports = (function() {
 		},
 
 		getAvailableDiceMoves: function(diceThrow, usedMoves, pawnIndex) {
-			var closuredDice = _und.clone(diceThrow);
+			var closuredDice = _und.map(diceThrow, function(item){
+				return (item.pawn !== undefined && item.pawn !== pawnIndex) ? item.value : item;
+			});
 			var closuredMoves = _und.map(usedMoves, function(item){
 				return item.value;
 			});

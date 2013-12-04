@@ -122,7 +122,9 @@ describe('Parcheesi Core', function() {
             game.enterPawn(0,0);
             game.movePawn(0,0,2);
 
-            assert(_und.contains(game.lastDiceThrow(), CONSTANTS.extraMovesOnKill));
+            _und.where(game.lastDiceThrow(), {value:CONSTANTS.extraMovesOnKill})
+                .should.have.lengthOf(1);
+
         });
 
         it('should\'nt be able to kill an oponent Pawn while on a safe zone', function() {

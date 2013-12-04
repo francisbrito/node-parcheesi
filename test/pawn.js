@@ -31,7 +31,7 @@ describe('Parcheesi Core', function() {
             game.throwDices();
 
             (function(){
-                game.movePawn(0, 0, 4);    
+                game.movePawn(0, 0, 4);
             }).should.throw('Cannot make move that isn\'t present on last dice roll');
             
         });
@@ -47,7 +47,6 @@ describe('Parcheesi Core', function() {
 
             (function(){
                 game.movePawn(0, 0, 2);
-                debugger
                 game.movePawn(0, 0, 2);
             }).should.throw();
             
@@ -80,8 +79,7 @@ describe('Parcheesi Core', function() {
             (function(){
                 game.throwDices();
                 game.enterPawn(0,0);
-                debugger
-                game.movePawn(0,0,6);    
+                game.movePawn(0,0,6);
             }).should.throw();
         });
 
@@ -97,8 +95,7 @@ describe('Parcheesi Core', function() {
             (function(){
                 game.throwDices();
                 game.enterPawn(0,0);
-                debugger
-                game.movePawn(0,0,2);    
+                game.movePawn(0,0,2);
             }).should.throw();
         });
 
