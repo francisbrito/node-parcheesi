@@ -1,14 +1,19 @@
 {
-    "name": "node-parcheesi",
-    "description": "Parcheesi Game developed in NodeJS (just for fun)",
-    "dependencies": {
-        "mocha": "1.14",
-        "should": "2.1.0",
-        "underscore": "1.5.2",
-        "colors": "0.6.2",
-        "sinon": "1.7.3"
-    },
-    "scripts": {
-        "preinstall": "node config_environment.js"
-    }
+  "name": "node-parcheesi",
+  "description": "Parcheesi Game developed in NodeJS (just for fun)",
+  "dependencies": {
+    "underscore": "1.5.2",
+    "colors": "0.6.2"
+  },
+  "scripts": {
+    "preinstall": "node config_environment.js"
+  },
+  "devDependencies": {
+    "grunt-mocha-test": "~0.8.1",
+    "grunt": "~0.4.2",
+    "load-grunt-tasks": "~0.2.0",
+    "mocha": "1.14",
+    "should": "2.1.0",
+    "sinon": "1.7.3"
+  }
 }

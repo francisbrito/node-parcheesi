@@ -10,7 +10,8 @@ var CONSTANTS = require('./../constants'),
     _und = require('underscore'),
     testUtils = require('./test_utils'),
     dice = require('./../dice'),
-    ParcheesiGame = require('./../parcheesi');
+    ParcheesiGame = require('./../parcheesi'),
+    should = require('should');
 
 
 describe('Parcheesi Core', function() {
@@ -44,7 +45,7 @@ describe('Parcheesi Core', function() {
             var currentTurn = game.currentTurn(),
                 pawn = testUtils.positionPawnOnStart(game, currentTurn),
                 initialPosition = pawn.position;
-                
+
             game.throwDices();
             var lastRoll = game.lastDiceThrow();
 
@@ -60,11 +61,11 @@ describe('Parcheesi Core', function() {
             //TODO: Instead of using position.PawnOnStart it should be passed to the game object on options
             testUtils.positionPawnOnStart(game, 0);
             testUtils.positionPawnOnStart(game, 1);
-            
+
             (function(){
                 game.movePawn(1, 0, 5);
             }).should.throw();
-            
+
         });
 
         it('should only be able to play during its turn (enterPawn)', function() {
@@ -72,7 +73,7 @@ describe('Parcheesi Core', function() {
                 startingTurn : 0,
                 dices: [new dice(5), new dice(5)]
             });
-            
+
             (function(){
                 game.throwDices();
                 game.enterPawn(1);
@@ -102,7 +103,7 @@ describe('Parcheesi Core', function() {
             });
 
             testUtils.positionPawn(game, 1, 0, 7);
-            
+
             game.throwDices();
             game.enterPawn(0,0);
             game.movePawn(0,0,2);
@@ -117,7 +118,7 @@ describe('Parcheesi Core', function() {
             });
 
             testUtils.positionPawn(game, 1, 0, 7);
-            
+
             game.throwDices();
             game.enterPawn(0,0);
             game.movePawn(0,0,2);
