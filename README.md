@@ -30,6 +30,7 @@ grunt test
 For more information:
 * Here's an [introduction to NPM](http://howtonode.org/introduction-to-npm)
 * And the [mocha documentation](http://visionmedia.github.io/mocha/)
+* And the [docs for grunt](http://gruntjs.com/getting-started)
 
 [git]: http://git-scm.com "Official Git site"
 [nodejs]: http://nodejs.org "Official Node.js site"
